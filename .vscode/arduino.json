@@ -1,0 +1,7 @@
+{
+    "board": "arduino:avr:leonardo",
+    "sketch": "shooter.ino",
+    "output": "./build",
+    "port": "/dev/cu.usbmodem21301",
+    "programmer": "AVRISP mkII"
+}
