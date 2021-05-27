@@ -5,22 +5,28 @@ Arduboy2 arduboy;
 // Constants
 constexpr int16_t screenCenterX = 64;
 constexpr int16_t screenCenterY = 32;
-constexpr int8_t radius = 6; // Radius of the turrets body
+constexpr int8_t radius = 6; // Radius of the turret's body
 constexpr int16_t gunSize = 3; // Size (length) of the gun
 constexpr int8_t bullets = 3; // The number of bullets that can be on the screen at the same time
+constexpr int8_t enemies = 3;
 
 // Variables
 float gunAngle = 4.8; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
 
 // Bullets
-struct Bullet
-{
+struct Bullet {
     int16_t x, y, lifetime; // screen position
     float initialAngle; // which direction the bullet will go
     bool isOnScreen; // is the bullet exists
 };
 
+struct Enemy {
+    int16_t x, y, width, height;
+    bool isOnScreen;
+};
+
 Bullet bullet[bullets];
+Enemy enemy[enemies];
 
 // Drawing the turret
 void drawGun(float angle) {
@@ -46,7 +52,7 @@ void drawGun(float angle) {
 void rotateGun() {
     // Rotating the turret clockwise, if we reach the full radian then start from 0 so the
     // turret can be rotated in an endless circle
-    if (arduboy.pressed(RIGHT_BUTTON)) {
+    if (arduboy.pressed(UP_BUTTON)) {
         if (gunAngle <= 6.28) {
             gunAngle = gunAngle + 0.05;
         }
@@ -57,7 +63,7 @@ void rotateGun() {
 
     // Rotating the turret counterclockwise, if we reach 0 radian then start over from 6.28
     // so the turret can be rotated in an endless circle in this direction as well
-    if (arduboy.pressed(LEFT_BUTTON)) {
+    if (arduboy.pressed(DOWN_BUTTON)) {
         if (gunAngle >= 0.01) {
             gunAngle = gunAngle - 0.05;
         }
@@ -68,7 +74,7 @@ void rotateGun() {
 }
 
 // Printing some info about the current angle of the turret __FIXME__ can be removed later
-void printGunInfo() {
+void printInfo() {
     arduboy.setCursor(1, 1);
     arduboy.print(bullet[0].initialAngle);
 }
@@ -144,6 +150,25 @@ void checkBullets() {
     return;
 }
 
+// void moveEnemy() {
+//     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+//         if (enemy[enemyNum].isOnScreen) {
+
+//         }
+//     }
+    
+// }
+
+void drawEnemy() {
+    enemy[0].isOnScreen = true;
+    enemy[0].x = 85;
+    enemy[0].y = 10;
+    enemy[0].width = 5;
+    enemy[0].height = 5;
+
+    arduboy.drawRect(enemy[0].x, enemy[0].y, enemy[0].width, enemy[0].height, WHITE);
+}
+
 void setup() {
     arduboy.begin();
     arduboy.initRandomSeed(); // For generating the enemies at random points
@@ -181,6 +206,9 @@ void loop() {
     moveBullets();
     checkBullets();
     drawBullets();
+
+    // Enemies
+    drawEnemy();
 
     // Draw everything
     arduboy.display();
