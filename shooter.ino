@@ -15,15 +15,16 @@ float gunAngle = 4.8; // Full circle is 6.28 radian, let's put the gun at 4.8 so
 
 // Bullets
 struct Bullet {
-    int16_t x, y, lifetime; // screen position
-    float initialAngle; // which direction the bullet will go
-    bool isOnScreen; // is the bullet exists
+    int16_t x, y, lifetime { 0 }; // screen position
+    float initialAngle { 0.0 }; // which direction the bullet will go
+    bool isOnScreen { false }; // is the bullet exists
 };
 
 struct Enemy {
-    int16_t x, y, lifetime, width, height;
-    int16_t dx, dy;
-    bool isOnScreen;
+    int16_t x, y, dx, dy { 0 };
+    int16_t width { 5 };
+    int16_t height { 5 };
+    bool isOnScreen { false };
 };
 
 Bullet bullet[bullets];
@@ -53,7 +54,7 @@ void drawGun(float angle) {
 void rotateGun() {
     // Rotating the turret clockwise, if we reach the full radian then start from 0 so the
     // turret can be rotated in an endless circle
-    if (arduboy.pressed(UP_BUTTON)) {
+    if (arduboy.pressed(RIGHT_BUTTON)) {
         if (gunAngle <= 6.28) {
             gunAngle = gunAngle + 0.05;
         }
@@ -64,7 +65,7 @@ void rotateGun() {
 
     // Rotating the turret counterclockwise, if we reach 0 radian then start over from 6.28
     // so the turret can be rotated in an endless circle in this direction as well
-    if (arduboy.pressed(DOWN_BUTTON)) {
+    if (arduboy.pressed(LEFT_BUTTON)) {
         if (gunAngle >= 0.01) {
             gunAngle = gunAngle - 0.05;
         }
@@ -77,7 +78,7 @@ void rotateGun() {
 // Printing some info about the current angle of the turret __FIXME__ can be removed later
 void printInfo() {
     arduboy.setCursor(1, 1);
-    arduboy.print(bullet[0].initialAngle);
+    arduboy.print(enemy[0].dx);
 }
 
 // Fire bullets by pressing the B_BUTTON
@@ -159,27 +160,36 @@ void drawEnemy() {
     }
 }
 
-// FIXME
+// Moving the enemies randomly
 void moveEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isOnScreen) {
-            enemy[enemyNum].lifetime++;
-            enemy[enemyNum].x++;
-            enemy[enemyNum].y++;
+            // Direction at random at every 40 frames
+            if (arduboy.everyXFrames(40)) {
+                enemy[enemyNum].dx = random(3) - 1;
+                enemy[enemyNum].dy = random(3) - 1;
+            }
+            // Move the enemy every 3 frames
+            if (arduboy.everyXFrames(3)) {
+                enemy[enemyNum].x += enemy[enemyNum].dx;
+                enemy[enemyNum].y += enemy[enemyNum].dy;
+            }
+            // Remove enemy if outside of screen
             if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 128 || enemy[enemyNum].y < 0 || enemy[enemyNum].y > 64)  {
                 enemy[enemyNum].isOnScreen = false;
-                enemy[enemyNum].lifetime = 0;
             }
         }
     }    
 }
 
-// Summon the enemy, FIXME later want to do this in random intervals
+// If there is no enemy, summon new ones at random intervals
 void summonEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
-        if (!(enemy[enemyNum].isOnScreen)) {
-            enemy[enemyNum].x = random(5, 123);
-            enemy[enemyNum].y = random(5, 59);
+        if (!(enemy[enemyNum].isOnScreen) && (arduboy.everyXFrames(random(240)))) {
+            enemy[enemyNum].x = random(0, 123);
+            enemy[enemyNum].y = random(0, 10);
+            enemy[enemyNum].dx = random(3) - 1;
+            enemy[enemyNum].dy = random(3) - 1;
             enemy[enemyNum].isOnScreen = true;
         }
     }
@@ -188,24 +198,6 @@ void summonEnemy() {
 void setup() {
     arduboy.begin();
     arduboy.initRandomSeed(); // For generating the enemies at random points
-
-    // Init bullets
-    for (uint8_t bulletNum = 0; bulletNum < bullets; ++bulletNum) {
-        bullet[bulletNum].x = 0;
-        bullet[bulletNum].y = 0;
-        bullet[bulletNum].lifetime = 0;
-        bullet[bulletNum].initialAngle = 0.0;
-        bullet[bulletNum].isOnScreen = false;
-    }
-
-    // Init enemies
-    for (uint8_t enemyNum = 0; enemyNum < enemies; ++enemyNum) {
-        enemy[enemyNum].x = 0;
-        enemy[enemyNum].y = 0;
-        enemy[enemyNum].width = 5;
-        enemy[enemyNum].height = 5;
-        enemy[enemyNum].isOnScreen = false;
-    }
 }
 
 void loop() {
@@ -235,7 +227,8 @@ void loop() {
     // Enemies
     summonEnemy();
     drawEnemy();
-    // moveEnemy();
+    moveEnemy();
+    // printInfo();
 
     // Draw everything
     arduboy.display();
