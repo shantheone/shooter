@@ -21,7 +21,8 @@ struct Bullet {
 };
 
 struct Enemy {
-    int16_t x, y, width, height;
+    int16_t x, y, lifetime, width, height;
+    int16_t dx, dy;
     bool isOnScreen;
 };
 
@@ -136,12 +137,10 @@ void moveBullets() {
 
 // Drawing the bullets
 void drawBullets() {
-    // Firing with the B button
-    for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++)
-    {
+    for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
         if (bullet[bulletNum].isOnScreen) {
-                arduboy.drawPixel(bullet[bulletNum].x, bullet[bulletNum].y, WHITE);
-            }
+            arduboy.drawPixel(bullet[bulletNum].x, bullet[bulletNum].y, WHITE);
+        }
     }
 }
 
@@ -150,23 +149,40 @@ void checkBullets() {
     return;
 }
 
-// void moveEnemy() {
-//     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
-//         if (enemy[enemyNum].isOnScreen) {
-
-//         }
-//     }
-    
-// }
-
+// Drawing the enemies
 void drawEnemy() {
-    enemy[0].isOnScreen = true;
-    enemy[0].x = 85;
-    enemy[0].y = 10;
-    enemy[0].width = 5;
-    enemy[0].height = 5;
+    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+        if (enemy[enemyNum].isOnScreen) {
+            // X and Y coordinates plus width and height
+            arduboy.drawRect(enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height, WHITE);
+        }
+    }
+}
 
-    arduboy.drawRect(enemy[0].x, enemy[0].y, enemy[0].width, enemy[0].height, WHITE);
+// FIXME
+void moveEnemy() {
+    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+        if (enemy[enemyNum].isOnScreen) {
+            enemy[enemyNum].lifetime++;
+            enemy[enemyNum].x++;
+            enemy[enemyNum].y++;
+            if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 128 || enemy[enemyNum].y < 0 || enemy[enemyNum].y > 64)  {
+                enemy[enemyNum].isOnScreen = false;
+                enemy[enemyNum].lifetime = 0;
+            }
+        }
+    }    
+}
+
+// Summon the enemy, FIXME later want to do this in random intervals
+void summonEnemy() {
+    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+        if (!(enemy[enemyNum].isOnScreen)) {
+            enemy[enemyNum].x = random(5, 123);
+            enemy[enemyNum].y = random(5, 59);
+            enemy[enemyNum].isOnScreen = true;
+        }
+    }
 }
 
 void setup() {
@@ -180,6 +196,15 @@ void setup() {
         bullet[bulletNum].lifetime = 0;
         bullet[bulletNum].initialAngle = 0.0;
         bullet[bulletNum].isOnScreen = false;
+    }
+
+    // Init enemies
+    for (uint8_t enemyNum = 0; enemyNum < enemies; ++enemyNum) {
+        enemy[enemyNum].x = 0;
+        enemy[enemyNum].y = 0;
+        enemy[enemyNum].width = 5;
+        enemy[enemyNum].height = 5;
+        enemy[enemyNum].isOnScreen = false;
     }
 }
 
@@ -208,7 +233,9 @@ void loop() {
     drawBullets();
 
     // Enemies
+    summonEnemy();
     drawEnemy();
+    // moveEnemy();
 
     // Draw everything
     arduboy.display();
