@@ -5,10 +5,10 @@ Arduboy2 arduboy;
 // Constants
 constexpr int16_t screenCenterX = 64;
 constexpr int16_t screenCenterY = 32;
-constexpr int8_t radius = 6; // Radius of the turret's body
-constexpr int16_t gunSize = 3; // Size (length) of the gun
-constexpr int8_t bullets = 3; // The number of bullets that can be on the screen at the same time
-constexpr int8_t enemies = 3;
+constexpr uint8_t radius = 5; // Radius of the turret's body
+constexpr uint8_t gunSize = 3; // Size (length) of the gun
+constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
+constexpr uint8_t enemies = 3;
 
 // Variables
 float gunAngle = 4.8; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
@@ -22,8 +22,8 @@ struct Bullet {
 
 struct Enemy {
     int16_t x, y, dx, dy { 0 };
-    int16_t width { 5 };
-    int16_t height { 5 };
+    uint8_t width { 5 };
+    uint8_t height { 5 };
     bool isOnScreen { false };
 };
 
@@ -33,7 +33,7 @@ Enemy enemy[enemies];
 // Drawing the turret
 void drawGun(float angle) {
     // The body of the turret is a circle
-    arduboy.drawCircle(screenCenterX, screenCenterY, radius, WHITE);
+    arduboy.fillCircle(screenCenterX, screenCenterY, radius, WHITE);
 
     // Drawing the gun
     // The gun is a line with its starting point fixed on the circle. To achive this there is
@@ -146,8 +146,25 @@ void drawBullets() {
 }
 
 // Collision detection __FIXME__
-void checkBullets() {
-    return;
+void bulletHit() {
+    // Iterate through all enemies
+    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+        // If any of them is on the screen...
+        if (enemy[enemyNum].isOnScreen) {
+            // ...then create a hitBox for them...
+            Rect hitBox { enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height };
+            // ...and iterate through all the bullets to see if we have a colision...
+            for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
+                // Create a hitbox for each of the bullets
+                Rect bulletBox { bullet[bulletNum].x, bullet[bulletNum].y, 1, 1 };
+                // Check if there is a collision
+                if (arduboy.collide(hitBox, bulletBox)) {
+                    // If there is, remove the enemy
+                    enemy[enemyNum].isOnScreen = false;
+                }
+            }
+        }
+    }
 }
 
 // Drawing the enemies
@@ -155,7 +172,7 @@ void drawEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isOnScreen) {
             // X and Y coordinates plus width and height
-            arduboy.drawRect(enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height, WHITE);
+            arduboy.fillRect(enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height, WHITE);
         }
     }
 }
@@ -221,7 +238,7 @@ void loop() {
     // Bullets
     fireBullets();
     moveBullets();
-    checkBullets();
+    bulletHit();
     drawBullets();
 
     // Enemies
