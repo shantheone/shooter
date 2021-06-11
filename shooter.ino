@@ -17,7 +17,7 @@ float gunAngle = 4.8; // Full circle is 6.28 radian, let's put the gun at 4.8 so
 struct Bullet {
     int16_t x, y, lifetime { 0 }; // screen position
     float initialAngle { 0.0 }; // which direction the bullet will go
-    bool isOnScreen { false }; // is the bullet exists
+    bool isOnScreen { false }; // does the bullet exist
 };
 
 struct Enemy {
@@ -99,7 +99,7 @@ uint8_t findUnusedBullet() {
     uint8_t bulletNum;
     for (bulletNum = 0; bulletNum < bullets; bulletNum++) {
         // If .isOnScreen property is not set then set it to true and break the for loop
-        // since we found the next empty slot in the array
+        // since we found the next usable slot in the array
         if (!(bullet[bulletNum].isOnScreen)) {
             bullet[bulletNum].isOnScreen = true;
             break;
@@ -116,7 +116,7 @@ void moveBullets() {
             // move it outward from the position it was originally fired
             bullet[bulletNum].lifetime++; 
 
-            // If the bullet just came into existence fix the turrets angle as this is 
+            // If the bullet just came into existence get the turrets angle as this is 
             // the angle the bullet should fly
             if (bullet[bulletNum].lifetime == 1) {
                 bullet[bulletNum].initialAngle = gunAngle;
@@ -145,7 +145,7 @@ void drawBullets() {
     }
 }
 
-// Collision detection __FIXME__
+// Collision detection
 void bulletHit() {
     // Iterate through all enemies
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
@@ -153,7 +153,7 @@ void bulletHit() {
         if (enemy[enemyNum].isOnScreen) {
             // ...then create a hitBox for them...
             Rect hitBox { enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height };
-            // ...and iterate through all the bullets to see if we have a colision...
+            // ...and iterate through all the bullets to see if we have a collision...
             for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
                 // Create a hitbox for each of the bullets
                 Rect bulletBox { bullet[bulletNum].x, bullet[bulletNum].y, 1, 1 };
@@ -204,7 +204,7 @@ void summonEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (!(enemy[enemyNum].isOnScreen) && (arduboy.everyXFrames(random(240)))) {
             enemy[enemyNum].x = random(0, 123);
-            enemy[enemyNum].y = random(0, 10);
+            enemy[enemyNum].y = random(0, 4);
             enemy[enemyNum].dx = random(3) - 1;
             enemy[enemyNum].dy = random(3) - 1;
             enemy[enemyNum].isOnScreen = true;
