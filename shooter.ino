@@ -159,7 +159,8 @@ void bulletHit() {
                 Rect bulletBox { bullet[bulletNum].x, bullet[bulletNum].y, 1, 1 };
                 // Check if there is a collision
                 if (arduboy.collide(hitBox, bulletBox)) {
-                    // If there is, remove the enemy
+                    // If there is, remove the enemy and draw explosion
+                    drawExplosion(enemy[enemyNum].x + (enemy[enemyNum].width / 2), enemy[enemyNum].y + (enemy[enemyNum].y / 2));
                     enemy[enemyNum].isOnScreen = false;
                 }
             }
@@ -209,6 +210,18 @@ void summonEnemy() {
             enemy[enemyNum].dy = random(3) - 1;
             enemy[enemyNum].isOnScreen = true;
         }
+    }
+}
+
+void drawExplosion(int16_t x, int16_t y) {
+    if (arduboy.everyXFrames(15)) {
+        arduboy.drawCircle(x, y, 1, WHITE);
+    }
+    if (arduboy.everyXFrames(30)) {
+        arduboy.drawCircle(x, y, 2, WHITE);
+    }
+    if (arduboy.everyXFrames(45)) {
+        arduboy.drawCircle(x, y, 3, WHITE);
     }
 }
 
