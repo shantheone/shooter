@@ -11,7 +11,8 @@ constexpr uint8_t bullets = 3; // The number of bullets that can be on the scree
 constexpr uint8_t enemies = 3;
 
 // Variables
-float gunAngle = 4.8; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
+float gunAngle { 4.8 }; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
+uint8_t frame { 0 };
 
 // Bullets
 struct Bullet {
@@ -25,6 +26,7 @@ struct Enemy {
     uint8_t width { 5 };
     uint8_t height { 5 };
     bool isOnScreen { false };
+    bool isExploded { false };
 };
 
 Bullet bullet[bullets];
@@ -75,10 +77,10 @@ void rotateGun() {
     }
 }
 
-// Printing some info about the current angle of the turret __FIXME__ can be removed later
-void printInfo() {
+// Printing some info __FIXME__ can be removed later
+void printInfo(uint16_t text) {
     arduboy.setCursor(1, 1);
-    arduboy.print(enemy[0].dx);
+    arduboy.print(text);
 }
 
 // Fire bullets by pressing the B_BUTTON
@@ -160,7 +162,7 @@ void bulletHit() {
                 // Check if there is a collision
                 if (arduboy.collide(hitBox, bulletBox)) {
                     // If there is, remove the enemy and draw explosion
-                    drawExplosion(enemy[enemyNum].x + (enemy[enemyNum].width / 2), enemy[enemyNum].y + (enemy[enemyNum].y / 2));
+                    enemy[enemyNum].isExploded = true;
                     enemy[enemyNum].isOnScreen = false;
                 }
             }
@@ -213,15 +215,31 @@ void summonEnemy() {
     }
 }
 
-void drawExplosion(int16_t x, int16_t y) {
-    if (arduboy.everyXFrames(15)) {
-        arduboy.drawCircle(x, y, 1, WHITE);
+void drawExplosion() {
+    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+        if (enemy[enemyNum].isExploded) {
+            explosion(enemy[enemyNum].x, enemy[enemyNum].y);
+        }
+        // enemy[enemyNum].isExploded = false;
     }
-    if (arduboy.everyXFrames(30)) {
-        arduboy.drawCircle(x, y, 2, WHITE);
-    }
-    if (arduboy.everyXFrames(45)) {
-        arduboy.drawCircle(x, y, 3, WHITE);
+}
+
+void explosion(int16_t x, int16_t y) {
+    switch (frame) {
+        case 0:
+            arduboy.setCursor(x, y);
+            arduboy.print(":");
+            break;
+        
+        case 1:
+            arduboy.setCursor(x, y);
+            arduboy.print("*");
+            break;
+
+        case 2:
+            arduboy.setCursor(x, y);
+            arduboy.print(" ");
+            break;
     }
 }
 
@@ -259,7 +277,13 @@ void loop() {
     drawEnemy();
     moveEnemy();
     // printInfo();
+    drawExplosion();
+    arduboy.setCursor (5, 5);
+    arduboy.print(frame);
 
     // Draw everything
     arduboy.display();
+
+    if (arduboy.everyXFrames(10)) frame++;
+    if (frame > 2) frame = 0;
 }
