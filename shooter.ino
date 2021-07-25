@@ -1,6 +1,7 @@
 #include <Arduboy2.h>
 
 Arduboy2 arduboy;
+BeepPin1 beep;
 
 // Constants
 constexpr int16_t screenCenterX = 64;
@@ -9,6 +10,7 @@ constexpr uint8_t radius = 5; // Radius of the turret's body
 constexpr uint8_t gunSize = 3; // Size (length) of the gun
 constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
 constexpr uint8_t enemies = 3;
+constexpr uint8_t explosions = 3;
 
 // Variables
 float gunAngle { 4.8 }; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
@@ -16,7 +18,7 @@ uint8_t frame { 0 };
 
 // Bullets
 struct Bullet {
-    int16_t x, y, lifetime { 0 }; // screen position
+    int16_t x, y, lifetime { 0 }; // screen position, and lifetime
     float initialAngle { 0.0 }; // which direction the bullet will go
     bool isOnScreen { false }; // does the bullet exist
 };
@@ -29,8 +31,15 @@ struct Enemy {
     bool isExploded { false };
 };
 
+struct Explosion {
+    int16_t x, y { 0 }; // screen position
+    uint8_t lifetime { 0 }; // lifetime of the explosion
+    bool isOnScreen { false }; // does the bullet exist
+};
+
 Bullet bullet[bullets];
 Enemy enemy[enemies];
+Explosion explosion[explosions];
 
 // Drawing the turret
 void drawGun(float angle) {
@@ -92,6 +101,7 @@ void fireBullets() {
         if (bulletNum != bullets) {
             bullet[bulletNum].x = screenCenterX + ((1 + radius + gunSize) * cos(gunAngle));
             bullet[bulletNum].y = screenCenterY + ((1 + radius + gunSize) * sin(gunAngle));
+            beep.tone(beep.freq(240), 10); // Make a sound when bullet is fired
         }
     }
 }
@@ -164,6 +174,8 @@ void bulletHit() {
                     // If there is, remove the enemy and draw explosion
                     enemy[enemyNum].isExploded = true;
                     enemy[enemyNum].isOnScreen = false;
+                    // Make a sound when enemy is hit
+                    beep.tone(beep.freq(440), 10);
                 }
             }
         }
@@ -218,13 +230,19 @@ void summonEnemy() {
 void drawExplosion() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isExploded) {
-            explosion(enemy[enemyNum].x, enemy[enemyNum].y);
+            for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
+                if (!(explosion[explosionNum].isOnScreen)) {
+                    explosion[explosionNum].x = enemy[enemyNum].x;
+                    explosion[explosionNum].y = enemy[enemyNum].y;
+                }
+                
+            }
         }
-        // enemy[enemyNum].isExploded = false;
     }
 }
 
-void explosion(int16_t x, int16_t y) {
+// For testing
+void psps_explosion(int16_t x, int16_t y) {
     switch (frame) {
         case 0:
             arduboy.setCursor(x, y);
@@ -245,6 +263,7 @@ void explosion(int16_t x, int16_t y) {
 
 void setup() {
     arduboy.begin();
+    beep.begin();
     arduboy.initRandomSeed(); // For generating the enemies at random points
 }
 
@@ -277,9 +296,9 @@ void loop() {
     drawEnemy();
     moveEnemy();
     // printInfo();
-    drawExplosion();
-    arduboy.setCursor (5, 5);
-    arduboy.print(frame);
+
+    // Explosions TESTING
+    psps_explosion();
 
     // Draw everything
     arduboy.display();
