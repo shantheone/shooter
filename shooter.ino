@@ -10,7 +10,7 @@ constexpr uint8_t radius = 5; // Radius of the turret's body
 constexpr uint8_t gunSize = 3; // Size (length) of the gun
 constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
 constexpr uint8_t enemies = 3;
-constexpr uint8_t explosions = 3;
+constexpr uint8_t explosions = enemies;
 
 // Variables
 float gunAngle { 4.8 }; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
@@ -28,12 +28,10 @@ struct Enemy {
     uint8_t width { 5 };
     uint8_t height { 5 };
     bool isOnScreen { false };
-    bool isExploded { false };
 };
 
 struct Explosion {
     int16_t x, y { 0 }; // screen position
-    uint8_t lifetime { 0 }; // lifetime of the explosion
     bool isOnScreen { false }; // does the bullet exist
 };
 
@@ -120,6 +118,20 @@ uint8_t findUnusedBullet() {
     return bulletNum;
 }
 
+// Find the next unused explosion slot in the array and return the index
+uint8_t findUnusedExplosion() {
+    uint8_t explosionNum;
+    for (explosionNum = 0; explosionNum < explosions; explosionNum++) {
+        // If .isOnScreen property is not set then set it to true and break the for loop
+        // since we found the next usable slot in the array
+        if (!(explosion[explosionNum].isOnScreen)) {
+            explosion[explosionNum].isOnScreen = true;
+            break;
+        }
+    }
+    return explosionNum;
+}
+
 // Moving the bullets
 void moveBullets() {
     for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
@@ -172,10 +184,11 @@ void bulletHit() {
                 // Check if there is a collision
                 if (arduboy.collide(hitBox, bulletBox)) {
                     // If there is, remove the enemy and draw explosion
-                    enemy[enemyNum].isExploded = true;
                     enemy[enemyNum].isOnScreen = false;
                     // Make a sound when enemy is hit
                     beep.tone(beep.freq(440), 10);
+                    // Create the explosion
+                    summonExplosion(enemy[enemyNum].x, enemy[enemyNum].y);
                 }
             }
         }
@@ -227,37 +240,37 @@ void summonEnemy() {
     }
 }
 
-void drawExplosion() {
-    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
-        if (enemy[enemyNum].isExploded) {
-            for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
-                if (!(explosion[explosionNum].isOnScreen)) {
-                    explosion[explosionNum].x = enemy[enemyNum].x;
-                    explosion[explosionNum].y = enemy[enemyNum].y;
-                }
-                
-            }
+void summonExplosion(int16_t x, int16_t y) {
+    for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
+        if (!(explosion[explosionNum].isOnScreen)) {
+            explosion[explosionNum].x = x;
+            explosion[explosionNum].y = y;
+            explosion[explosionNum].isOnScreen = true;
         }
     }
 }
 
 // For testing
-void psps_explosion(int16_t x, int16_t y) {
-    switch (frame) {
-        case 0:
-            arduboy.setCursor(x, y);
-            arduboy.print(":");
-            break;
-        
-        case 1:
-            arduboy.setCursor(x, y);
-            arduboy.print("*");
-            break;
+void drawExplosion() {
+    for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
+        if (explosion[explosionNum].isOnScreen) {
+            switch (frame) {
+                case 0:
+                    arduboy.setCursor(explosion[explosionNum].x, explosion[explosionNum].y);
+                    arduboy.print(":");
+                    break;
+                
+                case 1:
+                    arduboy.setCursor(explosion[explosionNum].x, explosion[explosionNum].y);
+                    arduboy.print("*");
+                    break;
 
-        case 2:
-            arduboy.setCursor(x, y);
-            arduboy.print(" ");
-            break;
+                case 2:
+                    arduboy.setCursor(explosion[explosionNum].x, explosion[explosionNum].y);
+                    arduboy.print(" ");
+                    break;
+            }
+        }
     }
 }
 
@@ -279,6 +292,9 @@ void loop() {
     // Clear the screen
     arduboy.clear();
 
+    // Beep timer
+    beep.timer();
+
     // Game functions
 
     // Turret
@@ -297,8 +313,8 @@ void loop() {
     moveEnemy();
     // printInfo();
 
-    // Explosions TESTING
-    psps_explosion();
+    // Explosions
+    drawExplosion();
 
     // Draw everything
     arduboy.display();
