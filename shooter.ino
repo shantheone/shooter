@@ -1,7 +1,9 @@
 #include <Arduboy2.h>
+#include "bitmaps.h"
 
 Arduboy2 arduboy;
 BeepPin1 beep;
+Sprites sprites;
 
 // Constants
 constexpr int16_t screenCenterX = 64;
@@ -200,7 +202,7 @@ void drawEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isOnScreen) {
             // X and Y coordinates plus width and height
-            arduboy.fillRect(enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height, WHITE);
+            sprites.drawOverwrite(enemy[enemyNum].x, enemy[enemyNum].y, enemy_01, frame);
         }
     }
 }
@@ -219,9 +221,10 @@ void moveEnemy() {
                 enemy[enemyNum].x += enemy[enemyNum].dx;
                 enemy[enemyNum].y += enemy[enemyNum].dy;
             }
-            // Remove enemy if outside of screen
+            // Change enemy movement direction if enemy is outside of screen
             if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 128 || enemy[enemyNum].y < 0 || enemy[enemyNum].y > 64)  {
-                enemy[enemyNum].isOnScreen = false;
+                enemy[enemyNum].dx = random(3) - 1;
+                enemy[enemyNum].dy = random(3) - 1;
             }
         }
     }    
@@ -252,26 +255,19 @@ void summonExplosion(int16_t x, int16_t y) {
 
 // For testing
 void drawExplosion() {
+    uint8_t counter { 0 };
     for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
         if (explosion[explosionNum].isOnScreen) {
-            switch (frame) {
-                case 0:
-                    arduboy.setCursor(explosion[explosionNum].x, explosion[explosionNum].y);
-                    arduboy.print(":");
-                    break;
-                
-                case 1:
-                    arduboy.setCursor(explosion[explosionNum].x, explosion[explosionNum].y);
-                    arduboy.print("*");
-                    break;
+            sprites.drawOverwrite(explosion[explosionNum].x, explosion[explosionNum].y, explosion_bitmap, frame);
+            counter++;
+            }
 
-                case 2:
-                    arduboy.setCursor(explosion[explosionNum].x, explosion[explosionNum].y);
-                    arduboy.print(" ");
-                    break;
+        if (counter = 3)
+            {
+                sprites.drawErase(explosion[explosionNum].x, explosion[explosionNum].y, explosion_bitmap, frame);
+                explosion[explosionNum].isOnScreen = false;
             }
         }
-    }
 }
 
 void setup() {
@@ -314,7 +310,12 @@ void loop() {
     // printInfo();
 
     // Explosions
-    drawExplosion();
+    // drawExplosion();
+    sprites.drawOverwrite(10, 10, explosion_bitmap, frame);
+    if (arduboy.justPressed(A_BUTTON))
+    {
+        sprites.drawErase(10, 10, explosion_bitmap, frame);
+    }
 
     // Draw everything
     arduboy.display();
