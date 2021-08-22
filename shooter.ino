@@ -222,9 +222,20 @@ void moveEnemy() {
                 enemy[enemyNum].y += enemy[enemyNum].dy;
             }
             // Change enemy movement direction if enemy is outside of screen
-            if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 128 || enemy[enemyNum].y < 0 || enemy[enemyNum].y > 64)  {
-                enemy[enemyNum].dx = random(3) - 1;
-                enemy[enemyNum].dy = random(3) - 1;
+            if (enemy[enemyNum].x <= 0) {
+                enemy[enemyNum].dx *= -1;
+            }
+
+            if (enemy[enemyNum].y <= 0) {
+                enemy[enemyNum].dy *= -1;
+            }
+
+            if (enemy[enemyNum].x >= 120) {
+                enemy[enemyNum].dx *= -1;
+            }
+
+            if (enemy[enemyNum].y >= 56) {
+                enemy[enemyNum].dy *= -1;
             }
         }
     }    
@@ -255,25 +266,24 @@ void summonExplosion(int16_t x, int16_t y) {
 
 // For testing
 void drawExplosion() {
-    uint8_t counter { 0 };
+    uint8_t explosion_internal { 0 };
     for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
         if (explosion[explosionNum].isOnScreen) {
+            explosion_internal = explosionNum;
             sprites.drawOverwrite(explosion[explosionNum].x, explosion[explosionNum].y, explosion_bitmap, frame);
-            counter++;
-            }
-
-        if (counter = 3)
-            {
-                sprites.drawErase(explosion[explosionNum].x, explosion[explosionNum].y, explosion_bitmap, frame);
-                explosion[explosionNum].isOnScreen = false;
-            }
         }
+    }
+
+    if (frame == 2) {
+        explosion[explosion_internal].isOnScreen = false;
+    }
 }
 
 void setup() {
     arduboy.begin();
     beep.begin();
     arduboy.initRandomSeed(); // For generating the enemies at random points
+    arduboy.clear();
 }
 
 void loop() {
@@ -307,15 +317,11 @@ void loop() {
     summonEnemy();
     drawEnemy();
     moveEnemy();
-    // printInfo();
+    
+    // printInfo(frame);
 
     // Explosions
-    // drawExplosion();
-    sprites.drawOverwrite(10, 10, explosion_bitmap, frame);
-    if (arduboy.justPressed(A_BUTTON))
-    {
-        sprites.drawErase(10, 10, explosion_bitmap, frame);
-    }
+    drawExplosion();
 
     // Draw everything
     arduboy.display();
