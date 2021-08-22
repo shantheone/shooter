@@ -211,31 +211,28 @@ void drawEnemy() {
 void moveEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isOnScreen) {
-            // Direction at random at every 40 frames
-            if (arduboy.everyXFrames(40)) {
-                enemy[enemyNum].dx = random(3) - 1;
-                enemy[enemyNum].dy = random(3) - 1;
-            }
-            // Move the enemy every 3 frames
-            if (arduboy.everyXFrames(3)) {
+            // Move the enemy every 4 frames
+            if (arduboy.everyXFrames(4)) {
+                // Direction at random at every 40 frames
+                if (arduboy.everyXFrames(40)) {
+                    enemy[enemyNum].dx = random(-3, 3);
+                    enemy[enemyNum].dy = random(-3, 3);
+                }
+                // Change enemy movement direction if enemy is outside of screen (X axis)
+                if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 120) {
+                    enemy[enemyNum].dx *= -1;
+                    enemy[enemyNum].x = enemy[enemyNum].x + enemy[enemyNum].dx;
+                }
+                
+                // Change enemy movement direction if enemy is outside of screen (Y axis)
+                if (enemy[enemyNum].y < 0 || enemy[enemyNum].y > 56) {
+                    enemy[enemyNum].dy *= -1;
+                    enemy[enemyNum].y = enemy[enemyNum].y + enemy[enemyNum].dy;
+                }
+
+                // Move the enemies
                 enemy[enemyNum].x += enemy[enemyNum].dx;
                 enemy[enemyNum].y += enemy[enemyNum].dy;
-            }
-            // Change enemy movement direction if enemy is outside of screen
-            if (enemy[enemyNum].x <= 0) {
-                enemy[enemyNum].dx *= -1;
-            }
-
-            if (enemy[enemyNum].y <= 0) {
-                enemy[enemyNum].dy *= -1;
-            }
-
-            if (enemy[enemyNum].x >= 120) {
-                enemy[enemyNum].dx *= -1;
-            }
-
-            if (enemy[enemyNum].y >= 56) {
-                enemy[enemyNum].dy *= -1;
             }
         }
     }    
