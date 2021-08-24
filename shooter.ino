@@ -26,9 +26,10 @@ struct Bullet {
 };
 
 struct Enemy {
-    int16_t x, y, dx, dy { 0 };
-    uint8_t width { 5 };
-    uint8_t height { 5 };
+    int16_t x, y { 0 };
+    float dx, dy { random( -1.0, 1.0 )};
+    uint8_t width { 8 };
+    uint8_t height { 8 };
     bool isOnScreen { false };
 };
 
@@ -181,16 +182,21 @@ void bulletHit() {
             Rect hitBox { enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height };
             // ...and iterate through all the bullets to see if we have a collision...
             for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
-                // Create a hitbox for each of the bullets
-                Rect bulletBox { bullet[bulletNum].x, bullet[bulletNum].y, 1, 1 };
-                // Check if there is a collision
-                if (arduboy.collide(hitBox, bulletBox)) {
-                    // If there is, remove the enemy and draw explosion
-                    enemy[enemyNum].isOnScreen = false;
-                    // Make a sound when enemy is hit
-                    beep.tone(beep.freq(440), 10);
-                    // Create the explosion
-                    summonExplosion(enemy[enemyNum].x, enemy[enemyNum].y);
+                if (bullet[bulletNum].isOnScreen) {
+                    // Create a hitbox for each of the bullets
+                    Rect bulletBox { bullet[bulletNum].x, bullet[bulletNum].y, 1, 1 };
+                    // Check if there is a collision
+                    if (arduboy.collide(hitBox, bulletBox)) {
+                        // If there is, remove the enemy
+                        enemy[enemyNum].isOnScreen = false;
+                        // Make a sound when enemy is hit
+                        beep.tone(beep.freq(440), 10);
+                        // Create the explosion
+                        summonExplosion(enemy[enemyNum].x, enemy[enemyNum].y);
+                        // Remove the bullet and reset its lifetime
+                        bullet[bulletNum].isOnScreen = false;
+                        bullet[bulletNum].lifetime = 0;
+                    }
                 }
             }
         }
@@ -215,8 +221,8 @@ void moveEnemy() {
             if (arduboy.everyXFrames(4)) {
                 // Direction at random at every 40 frames
                 if (arduboy.everyXFrames(40)) {
-                    enemy[enemyNum].dx = random(-3, 3);
-                    enemy[enemyNum].dy = random(-3, 3);
+                    enemy[enemyNum].dx = random(-1.0, 1.0);
+                    enemy[enemyNum].dy = random(-1.0, 1.0);
                 }
                 // Change enemy movement direction if enemy is outside of screen (X axis)
                 if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 120) {
@@ -243,10 +249,12 @@ void summonEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (!(enemy[enemyNum].isOnScreen) && (arduboy.everyXFrames(random(240)))) {
             enemy[enemyNum].x = random(0, 120);
-            enemy[enemyNum].y = random(0, 24);
-            enemy[enemyNum].dx = random(-3, 3);
-            enemy[enemyNum].dy = random(-3, 3);
-            enemy[enemyNum].isOnScreen = true;
+            enemy[enemyNum].y = random(0, 56);
+            if (enemy[enemyNum].x < 56 || enemy[enemyNum].x > 72) {
+                if (enemy[enemyNum].y < 24 || enemy[enemyNum].y > 40) {
+                    enemy[enemyNum].isOnScreen = true;
+                }
+            }
         }
     }
 }
