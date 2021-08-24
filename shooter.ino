@@ -6,17 +6,17 @@ BeepPin1 beep;
 Sprites sprites;
 
 // Constants
-constexpr int16_t screenCenterX = 64;
-constexpr int16_t screenCenterY = 32;
+constexpr int16_t screenCenterX = 64; // Center of the screen for gun placement
+constexpr int16_t screenCenterY = 32; // Center of the screen for gun placement
 constexpr uint8_t radius = 5; // Radius of the turret's body
 constexpr uint8_t gunSize = 3; // Size (length) of the gun
 constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
-constexpr uint8_t enemies = 3;
-constexpr uint8_t explosions = enemies;
+constexpr uint8_t enemies = 3; // Max active enemies
+constexpr uint8_t explosions = enemies; // There should be only as many explosions as there are enemies
 
 // Variables
 float gunAngle { 4.8 }; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
-uint8_t frame { 0 };
+uint8_t frame { 0 }; // Used for counting frames for the sprite animations
 
 // Bullets
 struct Bullet {
@@ -25,14 +25,16 @@ struct Bullet {
     bool isOnScreen { false }; // does the bullet exist
 };
 
+// Enemies
 struct Enemy {
     int16_t x, y { 0 };
-    float dx, dy { random( -1.0, 1.0 )};
+    float dx, dy { 0.0 };
     uint8_t width { 8 };
     uint8_t height { 8 };
     bool isOnScreen { false };
 };
 
+// Explosions
 struct Explosion {
     int16_t x, y { 0 }; // screen position
     bool isOnScreen { false }; // does the bullet exist
@@ -153,8 +155,7 @@ void moveBullets() {
             bullet[bulletNum].x = screenCenterX + ((bullet[bulletNum].lifetime + radius + gunSize) * cos(bullet[bulletNum].initialAngle));
             bullet[bulletNum].y = screenCenterY + ((bullet[bulletNum].lifetime + radius + gunSize) * sin(bullet[bulletNum].initialAngle));
             
-            // Check if the bullet is out of the screen. If yes, reset its .isOnScreen and 
-            // .lifetime properties
+            // Check if the bullet is out of the screen. If yes, reset its .isOnScreen and .lifetime properties
             if (bullet[bulletNum].x < 0 || bullet[bulletNum].x > 128 || bullet[bulletNum].y < 0 || bullet[bulletNum].y > 64)  {
                 bullet[bulletNum].isOnScreen = false;
                 bullet[bulletNum].lifetime = 0;
@@ -173,6 +174,7 @@ void drawBullets() {
 }
 
 // Collision detection
+// __FIXME__ Add collison detection for the turret
 void bulletHit() {
     // Iterate through all enemies
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
@@ -207,7 +209,6 @@ void bulletHit() {
 void drawEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isOnScreen) {
-            // X and Y coordinates plus width and height
             sprites.drawOverwrite(enemy[enemyNum].x, enemy[enemyNum].y, enemy_01, frame);
         }
     }
@@ -224,13 +225,13 @@ void moveEnemy() {
                     enemy[enemyNum].dx = random(-1.0, 1.0);
                     enemy[enemyNum].dy = random(-1.0, 1.0);
                 }
-                // Change enemy movement direction if enemy is outside of screen (X axis)
+                // Change enemy movement direction if enemy is on the edge of screen (X axis)
                 if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 120) {
                     enemy[enemyNum].dx *= -1;
                     enemy[enemyNum].x = enemy[enemyNum].x + enemy[enemyNum].dx;
                 }
                 
-                // Change enemy movement direction if enemy is outside of screen (Y axis)
+                // Change enemy movement direction if enemy is on the edge of screen (Y axis)
                 if (enemy[enemyNum].y < 0 || enemy[enemyNum].y > 56) {
                     enemy[enemyNum].dy *= -1;
                     enemy[enemyNum].y = enemy[enemyNum].y + enemy[enemyNum].dy;
@@ -250,6 +251,7 @@ void summonEnemy() {
         if (!(enemy[enemyNum].isOnScreen) && (arduboy.everyXFrames(random(240)))) {
             enemy[enemyNum].x = random(0, 120);
             enemy[enemyNum].y = random(0, 56);
+            // Avoid putting enemies right next to or on top of the turret
             if (enemy[enemyNum].x < 56 || enemy[enemyNum].x > 72) {
                 if (enemy[enemyNum].y < 24 || enemy[enemyNum].y > 40) {
                     enemy[enemyNum].isOnScreen = true;
@@ -259,6 +261,7 @@ void summonEnemy() {
     }
 }
 
+// Check for on screen explosions and display a new one
 void summonExplosion(int16_t x, int16_t y) {
     for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
         if (!(explosion[explosionNum].isOnScreen)) {
@@ -269,16 +272,18 @@ void summonExplosion(int16_t x, int16_t y) {
     }
 }
 
-// For testing
+// Draw the explosion
 void drawExplosion() {
-    uint8_t explosion_internal { 0 };
+    uint8_t explosion_internal { 0 }; // temp variable for te explosion index to use later for removal
     for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
         if (explosion[explosionNum].isOnScreen) {
             explosion_internal = explosionNum;
+            // Draw the explosion sprite
             sprites.drawOverwrite(explosion[explosionNum].x, explosion[explosionNum].y, explosion_bitmap, frame);
         }
     }
 
+    // If second frame is reached, remove the explosion sprite
     if (frame == 2) {
         explosion[explosion_internal].isOnScreen = false;
     }
@@ -331,6 +336,6 @@ void loop() {
     // Draw everything
     arduboy.display();
 
-    if (arduboy.everyXFrames(10)) frame++;
-    if (frame > 2) frame = 0;
+    if (arduboy.everyXFrames(10)) frame++; // Frame counting for sprite animation
+    if (frame > 2) frame = 0; // Reset every third frame, since we are using sprites with three frames
 }
