@@ -14,6 +14,15 @@ constexpr uint8_t bullets = 3; // The number of bullets that can be on the scree
 constexpr uint8_t enemies = 3; // Max active enemies
 constexpr uint8_t explosions = enemies; // There should be only as many explosions as there are enemies
 
+// Game states
+enum class GameState : uint8_t {
+    Intro,
+    Menu,
+    Options,
+    Game,
+    GameOver
+};
+
 // Variables
 float gunAngle { 4.8 }; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
 uint8_t frame { 0 }; // Used for counting frames for the sprite animations
@@ -43,6 +52,12 @@ struct Explosion {
 Bullet bullet[bullets];
 Enemy enemy[enemies];
 Explosion explosion[explosions];
+GameState gameState = GameState::Intro;
+
+// Change game states
+void changeGameState (GameState newGameState) {
+    gameState = newGameState;
+}
 
 // Drawing the turret
 void drawGun(float angle) {
