@@ -311,6 +311,30 @@ void drawExplosion() {
     }
 }
 
+void gamePlay() {
+    // Game functions
+
+    // Turret
+    drawGun(gunAngle);
+    rotateGun();
+
+    // Bullets
+    fireBullets();
+    moveBullets();
+    bulletHit_or_turretHit();
+    drawBullets();
+
+    // Enemies
+    summonEnemy();
+    drawEnemy();
+    moveEnemy();
+    
+    // printInfo(frame);
+
+    // Explosions
+    drawExplosion();
+}
+
 void setup() {
     arduboy.begin();
     beep.begin();
@@ -333,28 +357,6 @@ void loop() {
     // Beep timer
     beep.timer();
 
-    // Game functions
-
-    // Turret
-    drawGun(gunAngle);
-    rotateGun();
-
-    // Bullets
-    fireBullets();
-    moveBullets();
-    bulletHit_or_turretHit();
-    drawBullets();
-
-    // Enemies
-    summonEnemy();
-    drawEnemy();
-    moveEnemy();
-    
-    // printInfo(frame);
-
-    // Explosions
-    drawExplosion();
-
     // Check GameState
     switch (gameState)
     {
@@ -376,6 +378,7 @@ void loop() {
         case GameState::Game:
             arduboy.clear();
             arduboy.print("Game");
+            gamePlay();
             break;
 
         case GameState::GameOver:
