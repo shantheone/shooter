@@ -188,6 +188,22 @@ void drawBullets() {
     }
 }
 
+// Reset game when game is over
+void resetGame() {
+    // Remove bullets
+    for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
+        if (bullet[bulletNum].isOnScreen) {
+            bullet[bulletNum].isOnScreen = false;
+        }
+    }
+    // Remove enemies
+    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+        if (enemy[enemyNum].isOnScreen) {
+            enemy[enemyNum].isOnScreen = false;
+        }
+    }
+}
+
 // Collision detection
 // __FIXME__ Add collison detection for the turret
 void bulletHit_or_turretHit() {
@@ -389,6 +405,7 @@ void loop() {
         case GameState::GameOver:
             arduboy.clear();
             arduboy.print("GameOver");
+            resetGame();
             if (arduboy.pressed(A_BUTTON)) {
                 changeGameState(GameState::Intro);
             }
