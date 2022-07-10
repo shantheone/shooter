@@ -352,9 +352,7 @@ void gamePlay() {
 }
 
 void introImage() {
-    arduboy.clear();
     arduboy.drawSlowXYBitmap(0, 0, intro_image, 128, 64, 1);
-    arduboy.display();
 }
 
 void setup() {
@@ -383,6 +381,7 @@ void loop() {
     switch (gameState)
     {
         case GameState::Intro:
+            arduboy.clear();
             introImage();
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Menu);
@@ -415,6 +414,9 @@ void loop() {
             arduboy.print("Paused");
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Game);
+            }
+            if (arduboy.justPressed(B_BUTTON)) {
+                changeGameState(GameState::GameOver);
             }
             break;
 
