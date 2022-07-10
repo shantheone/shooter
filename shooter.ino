@@ -20,6 +20,7 @@ enum class GameState : uint8_t {
     Menu,
     Options,
     Game,
+    Paused,
     GameOver
 };
 
@@ -400,6 +401,17 @@ void loop() {
         case GameState::Game:
             arduboy.clear();
             gamePlay();
+            if (arduboy.justPressed(A_BUTTON)) {
+                changeGameState(GameState::Paused);
+            }
+            break;
+
+        case GameState::Paused:
+            arduboy.clear();
+            arduboy.print("Paused");
+            if (arduboy.justPressed(A_BUTTON)) {
+                changeGameState(GameState::Game);
+            }
             break;
 
         case GameState::GameOver:
