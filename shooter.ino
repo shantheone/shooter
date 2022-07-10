@@ -352,6 +352,12 @@ void gamePlay() {
     drawExplosion();
 }
 
+void introImage() {
+    arduboy.clear();
+    arduboy.drawSlowXYBitmap(0, 0, intro_image, 128, 64, 1);
+    arduboy.display();
+}
+
 void setup() {
     arduboy.begin();
     beep.begin();
@@ -378,8 +384,7 @@ void loop() {
     switch (gameState)
     {
         case GameState::Intro:
-            arduboy.clear();
-            arduboy.print("Intro");
+            introImage();
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Menu);
             }
