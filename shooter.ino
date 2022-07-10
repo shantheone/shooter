@@ -206,7 +206,6 @@ void resetGame() {
 }
 
 // Collision detection
-// __FIXME__ Add collison detection for the turret
 void bulletHit_or_turretHit() {
     // Create hitbox for the turret
     Rect turretBox { screenCenterX-radius, screenCenterY-radius, radius * 2, radius * 2 };
