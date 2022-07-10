@@ -190,13 +190,20 @@ void drawBullets() {
 
 // Collision detection
 // __FIXME__ Add collison detection for the turret
-void bulletHit() {
+void bulletHit_or_turretHit() {
+    // Create hitbox for the turret
+    Rect turretBox { screenCenterX-radius, screenCenterY-radius, radius * 2, radius * 2 };
     // Iterate through all enemies
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         // If any of them is on the screen...
         if (enemy[enemyNum].isOnScreen) {
             // ...then create a hitBox for them...
             Rect hitBox { enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height };
+            // Check if the hitbox collides with the turret
+            if (arduboy.collide(hitBox, turretBox)) {
+                // And change GameState to GameOver if it does
+                changeGameState(GameState::GameOver);
+            }
             // ...and iterate through all the bullets to see if we have a collision...
             for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
                 if (bullet[bulletNum].isOnScreen) {
@@ -335,7 +342,7 @@ void loop() {
     // Bullets
     fireBullets();
     moveBullets();
-    bulletHit();
+    bulletHit_or_turretHit();
     drawBullets();
 
     // Enemies
@@ -348,6 +355,14 @@ void loop() {
     // Explosions
     drawExplosion();
 
+    // Check GameState
+    switch (gameState)
+    {
+    case GameState::GameOver:
+        arduboy.clear();
+        arduboy.write("E");
+        break;
+    }
     // Draw everything
     arduboy.display();
 
