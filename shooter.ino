@@ -358,10 +358,31 @@ void loop() {
     // Check GameState
     switch (gameState)
     {
-    case GameState::GameOver:
-        arduboy.clear();
-        arduboy.write("E");
-        break;
+        case GameState::Intro:
+            arduboy.clear();
+            arduboy.print("Intro");
+            break;
+
+        case GameState::Menu:
+            arduboy.clear();
+            arduboy.print("Menu");
+            break;
+
+        case GameState::Options:
+            arduboy.clear();
+            arduboy.print("Options");
+            break;
+
+        case GameState::Game:
+            arduboy.clear();
+            arduboy.print("Game");
+            break;
+
+        case GameState::GameOver:
+            arduboy.clear();
+            arduboy.print("GameOver");
+        
+        default: GameState::Intro; break;
     }
     // Draw everything
     arduboy.display();
