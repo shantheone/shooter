@@ -379,7 +379,7 @@ void loop() {
         case GameState::Intro:
             arduboy.clear();
             arduboy.print("Intro");
-            if (arduboy.pressed(A_BUTTON)) {
+            if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Menu);
             }
             break;
@@ -387,7 +387,7 @@ void loop() {
         case GameState::Menu:
             arduboy.clear();
             arduboy.print("Menu");
-            if (arduboy.pressed(A_BUTTON)) {
+            if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Game);
             }
             break;
@@ -406,7 +406,7 @@ void loop() {
             arduboy.clear();
             arduboy.print("GameOver");
             resetGame();
-            if (arduboy.pressed(A_BUTTON)) {
+            if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Intro);
             }
         
