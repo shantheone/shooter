@@ -363,11 +363,17 @@ void loop() {
         case GameState::Intro:
             arduboy.clear();
             arduboy.print("Intro");
+            if (arduboy.pressed(A_BUTTON)) {
+                changeGameState(GameState::Menu);
+            }
             break;
 
         case GameState::Menu:
             arduboy.clear();
             arduboy.print("Menu");
+            if (arduboy.pressed(A_BUTTON)) {
+                changeGameState(GameState::Game);
+            }
             break;
 
         case GameState::Options:
@@ -377,16 +383,19 @@ void loop() {
 
         case GameState::Game:
             arduboy.clear();
-            arduboy.print("Game");
             gamePlay();
             break;
 
         case GameState::GameOver:
             arduboy.clear();
             arduboy.print("GameOver");
+            if (arduboy.pressed(A_BUTTON)) {
+                changeGameState(GameState::Intro);
+            }
         
         default: GameState::Intro; break;
     }
+    
     // Draw everything
     arduboy.display();
 
