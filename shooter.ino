@@ -264,13 +264,13 @@ void moveEnemy() {
                     enemy[enemyNum].dy = random(-2.0, 2.0);
                 }
                 // Change enemy movement direction if enemy is on the edge of screen (X axis)
-                if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 120) {
+                if (enemy[enemyNum].x < 1 || enemy[enemyNum].x > 120) {
                     enemy[enemyNum].dx *= -1;
                     enemy[enemyNum].x = enemy[enemyNum].x + enemy[enemyNum].dx;
                 }
                 
                 // Change enemy movement direction if enemy is on the edge of screen (Y axis)
-                if (enemy[enemyNum].y < 0 || enemy[enemyNum].y > 56) {
+                if (enemy[enemyNum].y < 1 || enemy[enemyNum].y > 52) {
                     enemy[enemyNum].dy *= -1;
                     enemy[enemyNum].y = enemy[enemyNum].y + enemy[enemyNum].dy;
                 }
