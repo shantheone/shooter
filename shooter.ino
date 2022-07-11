@@ -259,9 +259,9 @@ void moveEnemy() {
             // Move the enemy every 4 frames
             if (arduboy.everyXFrames(4)) {
                 // Direction at random at every 40 frames
-                if (arduboy.everyXFrames(40)) {
-                    enemy[enemyNum].dx = random(-1.0, 1.0);
-                    enemy[enemyNum].dy = random(-1.0, 1.0);
+                if (arduboy.everyXFrames(50)) {
+                    enemy[enemyNum].dx = random(-2.0, 2.0);
+                    enemy[enemyNum].dy = random(-2.0, 2.0);
                 }
                 // Change enemy movement direction if enemy is on the edge of screen (X axis)
                 if (enemy[enemyNum].x < 0 || enemy[enemyNum].x > 120) {
@@ -275,9 +275,9 @@ void moveEnemy() {
                     enemy[enemyNum].y = enemy[enemyNum].y + enemy[enemyNum].dy;
                 }
 
-                // Move the enemies
-                enemy[enemyNum].x += enemy[enemyNum].dx;
-                enemy[enemyNum].y += enemy[enemyNum].dy;
+            // Move the enemies
+            enemy[enemyNum].x += enemy[enemyNum].dx;
+            enemy[enemyNum].y += enemy[enemyNum].dy;
             }
         }
     }    
