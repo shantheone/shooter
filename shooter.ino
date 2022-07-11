@@ -7,7 +7,7 @@ Sprites sprites;
 
 // Constants
 constexpr int16_t screenCenterX = 64; // Center of the screen for gun placement
-constexpr int16_t screenCenterY = 32; // Center of the screen for gun placement
+constexpr int16_t screenCenterY = 48; // Center of the screen for gun placement
 constexpr uint8_t radius = 5; // Radius of the turret's body
 constexpr uint8_t gunSize = 3; // Size (length) of the gun
 constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
@@ -172,7 +172,7 @@ void moveBullets() {
             bullet[bulletNum].y = screenCenterY + ((bullet[bulletNum].lifetime + radius + gunSize) * sin(bullet[bulletNum].initialAngle));
             
             // Check if the bullet is out of the screen. If yes, reset its .isOnScreen and .lifetime properties
-            if (bullet[bulletNum].x < 0 || bullet[bulletNum].x > 128 || bullet[bulletNum].y < 0 || bullet[bulletNum].y > 64)  {
+            if (bullet[bulletNum].x < 0 || bullet[bulletNum].x > 128 || bullet[bulletNum].y < 8 || bullet[bulletNum].y > 64)  {
                 bullet[bulletNum].isOnScreen = false;
                 bullet[bulletNum].lifetime = 0;
             }
@@ -270,7 +270,7 @@ void moveEnemy() {
                 }
                 
                 // Change enemy movement direction if enemy is on the edge of screen (Y axis)
-                if (enemy[enemyNum].y < 1 || enemy[enemyNum].y > 52) {
+                if (enemy[enemyNum].y < 10 || enemy[enemyNum].y > 52) {
                     enemy[enemyNum].dy *= -1;
                     enemy[enemyNum].y = enemy[enemyNum].y + enemy[enemyNum].dy;
                 }
@@ -288,7 +288,7 @@ void summonEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (!(enemy[enemyNum].isOnScreen) && (arduboy.everyXFrames(random(240)))) {
             enemy[enemyNum].x = random(0, 120);
-            enemy[enemyNum].y = random(0, 56);
+            enemy[enemyNum].y = random(8, 56);
             // Avoid putting enemies right next to or on top of the turret
             if (enemy[enemyNum].x < 56 || enemy[enemyNum].x > 72) {
                 if (enemy[enemyNum].y < 24 || enemy[enemyNum].y > 40) {
@@ -327,9 +327,15 @@ void drawExplosion() {
     }
 }
 
+void displayScore() {
+    arduboy.drawFastHLine(4, 8, 120, WHITE);
+}
+
 void gamePlay() {
     // Game functions
 
+    // Score
+    displayScore();
     // Turret
     drawGun(gunAngle);
     rotateGun();
