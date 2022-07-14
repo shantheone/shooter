@@ -13,6 +13,10 @@ constexpr uint8_t gunSize = 3; // Size (length) of the gun
 constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
 constexpr uint8_t enemies = 3; // Max active enemies
 constexpr uint8_t explosions = enemies; // There should be only as many explosions as there are enemies
+constexpr uint8_t menuOptions = 3; // The number of available menu options
+constexpr uint8_t minIndex = 0; // The index of the first menu item
+constexpr uint8_t maxIndex = (menuOptions - 1); // The index of the last menu item
+uint8_t selectedIndex = 0; // The index of the currently selected menu item
 
 // Game states
 enum class GameState : uint8_t {
@@ -361,6 +365,38 @@ void introImage() {
     arduboy.drawSlowXYBitmap(0, 0, intro_image, 128, 64, 1);
 }
 
+void displayMenu() {
+    if (arduboy.justPressed(UP_BUTTON))
+    {
+        // Decrease the selectedIndex
+        // (Making sure it stays in range)
+        if(selectedIndex > minIndex)
+            --selectedIndex;
+    }
+
+    // If down is pressed
+    if (arduboy.justPressed(DOWN_BUTTON))
+    {
+        // Increase the selectedIndex
+        // (Making sure it stays in range)
+        if(selectedIndex < maxIndex)
+            ++selectedIndex;
+    }
+    sprites.drawOverwrite(99, 39, menuSprite, 0);
+
+    // Store potential coordinates in arrays
+    static const uint8_t arrowCoordsX[menuOptions] PROGMEM { 98, 98, 92 };
+    static const uint8_t arrowCoordsY[menuOptions] PROGMEM { 40, 48, 56 };
+
+    // Read the arrow coordinates from the progmem arrays
+    // (This is usually cheaper than using lots of if statements)
+    const uint8_t arrowX = pgm_read_byte(&arrowCoordsX[selectedIndex]);
+    const uint8_t arrowY = pgm_read_byte(&arrowCoordsY[selectedIndex]);
+
+    // Draw the arrow
+    sprites.drawSelfMasked(arrowX, arrowY, arrowSprite, 0);
+}
+
 void setup() {
     arduboy.begin();
     beep.begin();
@@ -396,7 +432,7 @@ void loop() {
 
         case GameState::Menu:
             arduboy.clear();
-            arduboy.print("Menu");
+            displayMenu();
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Game);
             }
