@@ -23,7 +23,6 @@ uint8_t selectedIndex = 0; // The index of the currently selected menu item
 // Game states
 enum class GameState : uint8_t {
     Menu,
-    Options,
     Game,
     Paused,
     GameOver
@@ -435,11 +434,6 @@ void loop() {
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Game);
             }
-            break;
-
-        case GameState::Options:
-            arduboy.clear();
-            arduboy.print("Options");
             break;
 
         case GameState::Game:
