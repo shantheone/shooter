@@ -1,9 +1,11 @@
 #include <Arduboy2.h>
 #include "bitmaps.h"
+#include <Tinyfont.h>
 
 Arduboy2 arduboy;
 BeepPin1 beep;
 Sprites sprites;
+Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::height());
 
 // Constants
 constexpr int16_t screenCenterX = 64; // Center of the screen for gun placement
@@ -30,6 +32,7 @@ enum class GameState : uint8_t {
 // Variables
 float gunAngle { 4.8 }; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
 uint8_t frame { 0 }; // Used for counting frames for the sprite animations
+uint8_t score { 0 }; // For keeping score
 
 // Bullets
 struct Bullet {
@@ -206,6 +209,8 @@ void resetGame() {
             enemy[enemyNum].isOnScreen = false;
         }
     }
+    // Reset score
+    score = 0;
 }
 
 // Collision detection
@@ -239,6 +244,8 @@ void bulletHit_or_turretHit() {
                         // Remove the bullet and reset its lifetime
                         bullet[bulletNum].isOnScreen = false;
                         bullet[bulletNum].lifetime = 0;
+                        // Increase the score
+                        ++score;
                     }
                 }
             }
@@ -331,6 +338,11 @@ void drawExplosion() {
 }
 
 void displayScore() {
+    tinyfont.setCursor (4, 2);
+    tinyfont.print("Score: ");
+    tinyfont.setCursor (32, 2);
+    tinyfont.print(score);
+    // Draw separator for the game area and the score
     arduboy.drawFastHLine(4, 8, 120, WHITE);
 }
 
