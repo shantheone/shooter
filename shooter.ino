@@ -20,7 +20,6 @@ uint8_t selectedIndex = 0; // The index of the currently selected menu item
 
 // Game states
 enum class GameState : uint8_t {
-    Intro,
     Menu,
     Options,
     Game,
@@ -57,7 +56,7 @@ struct Explosion {
 Bullet bullet[bullets];
 Enemy enemy[enemies];
 Explosion explosion[explosions];
-GameState gameState = GameState::Intro;
+GameState gameState = GameState::Menu;
 
 // Change game states
 void changeGameState (GameState newGameState) {
@@ -361,11 +360,11 @@ void gamePlay() {
     drawExplosion();
 }
 
-void introImage() {
-    arduboy.drawSlowXYBitmap(0, 0, intro_image, 128, 64, 1);
-}
-
 void displayMenu() {
+    // Display intro image + menu
+    arduboy.drawSlowXYBitmap(0, 0, intro_image, 128, 64, 1);
+
+    // Move in the menu
     if (arduboy.justPressed(UP_BUTTON))
     {
         // Decrease the selectedIndex
@@ -373,8 +372,6 @@ void displayMenu() {
         if(selectedIndex > minIndex)
             --selectedIndex;
     }
-
-    // If down is pressed
     if (arduboy.justPressed(DOWN_BUTTON))
     {
         // Increase the selectedIndex
@@ -382,6 +379,7 @@ void displayMenu() {
         if(selectedIndex < maxIndex)
             ++selectedIndex;
     }
+    // Draw the menu sprite
     sprites.drawOverwrite(99, 39, menuSprite, 0);
 
     // Store potential coordinates in arrays
@@ -401,7 +399,6 @@ void setup() {
     arduboy.begin();
     beep.begin();
     arduboy.initRandomSeed(); // For generating the enemies at random points
-    arduboy.clear();
 }
 
 void loop() {
@@ -422,16 +419,7 @@ void loop() {
     // Check GameState
     switch (gameState)
     {
-        case GameState::Intro:
-            arduboy.clear();
-            introImage();
-            if (arduboy.justPressed(A_BUTTON)) {
-                changeGameState(GameState::Menu);
-            }
-            break;
-
         case GameState::Menu:
-            arduboy.clear();
             displayMenu();
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Game);
@@ -467,10 +455,10 @@ void loop() {
             arduboy.print("GameOver");
             resetGame();
             if (arduboy.justPressed(A_BUTTON)) {
-                changeGameState(GameState::Intro);
+                changeGameState(GameState::Menu);
             }
         
-        default: GameState::Intro; break;
+        default: GameState::Menu; break;
     }
     
     // Draw everything
