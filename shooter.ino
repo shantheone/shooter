@@ -347,10 +347,9 @@ void displayScore() {
 }
 
 void gamePlay() {
-    // Game functions
-
     // Score
     displayScore();
+
     // Turret
     drawGun(gunAngle);
     rotateGun();
