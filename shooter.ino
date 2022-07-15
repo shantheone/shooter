@@ -201,6 +201,7 @@ void resetGame() {
     for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
         if (bullet[bulletNum].isOnScreen) {
             bullet[bulletNum].isOnScreen = false;
+            bullet[bulletNum].lifetime = 0;
         }
     }
     // Remove enemies
