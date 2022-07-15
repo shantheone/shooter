@@ -8,8 +8,8 @@ Sprites sprites;
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::height());
 
 // Constants
-constexpr int16_t screenCenterX = 64; // Center of the screen for gun placement
-constexpr int16_t screenCenterY = 48; // Center of the screen for gun placement
+constexpr int16_t screenCenterX = 6; // Center of the screen for gun placement
+constexpr int16_t screenCenterY = 40; // Center of the screen for gun placement
 constexpr uint8_t radius = 5; // Radius of the turret's body
 constexpr uint8_t gunSize = 3; // Size (length) of the gun
 constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
@@ -29,7 +29,7 @@ enum class GameState : uint8_t {
 };
 
 // Variables
-float gunAngle { 4.8 }; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
+float gunAngle { 0 }; // Full circle is 6.28 radian, facing up is 4.8, level is 0
 uint8_t frame { 0 }; // Used for counting frames for the sprite animations
 uint8_t score { 0 }; // For keeping score
 uint8_t selectedIndex = 0; // The index of the currently selected menu item
@@ -217,7 +217,7 @@ void resetGame() {
     score = 0;
 
     // Reset gunAngle
-    gunAngle = 4.8;
+    gunAngle = 0;
 }
 
 // Collision detection
