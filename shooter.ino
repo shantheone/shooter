@@ -88,25 +88,23 @@ void drawGun(float angle) {
 
 // Rotating the turret
 void rotateGun() {
-    // Rotating the turret clockwise, if we reach the full radian then start from 0 so the
-    // turret can be rotated in an endless circle
+    // Rotating the turret clockwise, if we reach about 290 degrees then stop
     if (arduboy.pressed(RIGHT_BUTTON)) {
-        if (gunAngle <= 6.28) {
+        if (gunAngle <= 1.22) {
             gunAngle = gunAngle + 0.05;
         }
         else {
-            gunAngle = 0;
+            gunAngle = 1.22;
         }
     }
 
-    // Rotating the turret counterclockwise, if we reach 0 radian then start over from 6.28
-    // so the turret can be rotated in an endless circle in this direction as well
+    // Rotating the turret counterclockwise, if we reach about 70 degrees then stop
     if (arduboy.pressed(LEFT_BUTTON)) {
-        if (gunAngle >= 0.01) {
+        if (gunAngle >= -1.22) {
             gunAngle = gunAngle - 0.05;
         }
         else {
-            gunAngle = 6.28;
+            gunAngle = -1.22;
         }
     }
 }
