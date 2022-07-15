@@ -450,6 +450,14 @@ void moveInMenu() {
     }
 }
 
+void displayPauseScreen() {
+    arduboy.drawBitmap(0, 0, pause, 128, 64, WHITE);
+    tinyfont.setCursor (18, 36);
+    tinyfont.print("Press A to continue");
+    tinyfont.setCursor (36, 42);
+    tinyfont.print("or B to quit");
+}
+
 void setup() {
     arduboy.begin();
     beep.begin();
@@ -488,8 +496,7 @@ void loop() {
             break;
 
         case GameState::Paused:
-            arduboy.clear();
-            arduboy.print("Paused");
+            displayPauseScreen();
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Game);
             }
