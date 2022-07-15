@@ -503,7 +503,6 @@ void loop() {
             break;
 
         case GameState::Game:
-            arduboy.clear();
             gamePlay();
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Paused);
