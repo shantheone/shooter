@@ -25,6 +25,7 @@ enum class GameState : uint8_t {
     Menu,
     Game,
     Paused,
+    Credits,
     GameOver
 };
 
@@ -403,6 +404,25 @@ void displayMenu() {
 
     // Draw the arrow
     sprites.drawSelfMasked(arrowX, arrowY, arrowSprite, 0);
+
+    if (arduboy.justPressed(A_BUTTON)){
+        switch (selectedIndex)
+        {
+        case 0:
+            changeGameState(GameState::Game);
+            break;
+        
+        case 1:
+            arduboy.print("Change sound");
+            break;
+            
+        case 2:
+            changeGameState(GameState::Credits);
+
+        default:
+            break;
+        }
+    }
 }
 
 void setup() {
@@ -431,9 +451,6 @@ void loop() {
     {
         case GameState::Menu:
             displayMenu();
-            if (arduboy.justPressed(A_BUTTON)) {
-                changeGameState(GameState::Game);
-            }
             break;
 
         case GameState::Game:
@@ -452,6 +469,14 @@ void loop() {
             }
             if (arduboy.justPressed(B_BUTTON)) {
                 changeGameState(GameState::GameOver);
+            }
+            break;
+
+        case GameState::Credits:
+            arduboy.clear();
+            arduboy.print("Credits");
+            if (arduboy.justPressed(A_BUTTON)) {
+                changeGameState(GameState::Menu);
             }
             break;
 
