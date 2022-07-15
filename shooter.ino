@@ -204,12 +204,20 @@ void resetGame() {
             bullet[bulletNum].lifetime = 0;
         }
     }
-    // Remove enemies
+   
+   // Remove enemies
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isOnScreen) {
             enemy[enemyNum].isOnScreen = false;
         }
     }
+   
+    // Remove explosions
+    for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
+        if (explosion[explosionNum].isOnScreen) {
+            explosion[explosionNum].isOnScreen = false;
+        }
+
     // Reset score
     score = 0;
 
