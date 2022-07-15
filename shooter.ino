@@ -350,21 +350,6 @@ void drawExplosion() {
     }
 }
 
-void displayScore() {
-    tinyfont.setCursor (4, 2);
-    tinyfont.print("Score: ");
-    tinyfont.setCursor (32, 2);
-    tinyfont.print(score);
-    // Draw separator for the game area and the score
-    arduboy.drawFastHLine(4, 8, 120, WHITE);
-}
-
-void displayGameOver() {
-    arduboy.drawBitmap(0, 0, gameover, 128, 64, WHITE);
-    tinyfont.setCursor (26, 38);
-    tinyfont.print("Press A for menu");
-}
-
 void gamePlay() {
     // Score
     displayScore();
@@ -463,6 +448,21 @@ void moveInMenu() {
         if(selectedIndex < maxIndex)
             ++selectedIndex;
     }
+}
+
+void displayScore() {
+    tinyfont.setCursor (4, 2);
+    tinyfont.print("Score: ");
+    tinyfont.setCursor (32, 2);
+    tinyfont.print(score);
+    // Draw separator for the game area and the score
+    arduboy.drawFastHLine(4, 8, 120, WHITE);
+}
+
+void displayGameOver() {
+    arduboy.drawBitmap(0, 0, gameover, 128, 64, WHITE);
+    tinyfont.setCursor (26, 38);
+    tinyfont.print("Press A for menu");
 }
 
 void displayPauseScreen() {
