@@ -359,6 +359,12 @@ void displayScore() {
     arduboy.drawFastHLine(4, 8, 120, WHITE);
 }
 
+void displayGameOver() {
+    arduboy.drawBitmap(0, 0, gameover, 128, 64, WHITE);
+    tinyfont.setCursor (26, 38);
+    tinyfont.print("Press A for menu");
+}
+
 void gamePlay() {
     // Score
     displayScore();
@@ -523,8 +529,7 @@ void loop() {
             break;
 
         case GameState::GameOver:
-            arduboy.clear();
-            arduboy.print("GameOver");
+            displayGameOver();
             resetGame();
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Menu);
