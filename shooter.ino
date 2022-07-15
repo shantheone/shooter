@@ -217,6 +217,7 @@ void resetGame() {
         if (explosion[explosionNum].isOnScreen) {
             explosion[explosionNum].isOnScreen = false;
         }
+    }
 
     // Reset score
     score = 0;
