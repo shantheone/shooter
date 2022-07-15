@@ -390,11 +390,11 @@ void displayMenu() {
             ++selectedIndex;
     }
     // Draw the menu sprite
-    sprites.drawOverwrite(99, 39, menuSprite, 0);
+    sprites.drawOverwrite(92, 40, menuSpriteWithSoundOn, 0);
 
     // Store potential coordinates in arrays
-    static const uint8_t arrowCoordsX[menuOptions] PROGMEM { 98, 98, 92 };
-    static const uint8_t arrowCoordsY[menuOptions] PROGMEM { 40, 48, 56 };
+    static const uint8_t arrowCoordsX[menuOptions] PROGMEM { 99, 88, 93 };
+    static const uint8_t arrowCoordsY[menuOptions] PROGMEM { 41, 49, 57 };
 
     // Read the arrow coordinates from the progmem arrays
     // (This is usually cheaper than using lots of if statements)
