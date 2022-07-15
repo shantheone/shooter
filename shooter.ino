@@ -111,12 +111,6 @@ void rotateGun() {
     }
 }
 
-// Printing some info __FIXME__ can be removed later
-void printInfo(uint16_t text) {
-    arduboy.setCursor(1, 1);
-    arduboy.print(text);
-}
-
 // Fire bullets by pressing the B_BUTTON
 void fireBullets() {
     if (arduboy.justPressed(B_BUTTON)) {
@@ -369,8 +363,6 @@ void gamePlay() {
     drawEnemy();
     moveEnemy();
     
-    // printInfo(frame);
-
     // Explosions
     drawExplosion();
 }
