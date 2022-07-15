@@ -18,7 +18,6 @@ constexpr uint8_t explosions = enemies; // There should be only as many explosio
 constexpr uint8_t menuOptions = 3; // The number of available menu options
 constexpr uint8_t minIndex = 0; // The index of the first menu item
 constexpr uint8_t maxIndex = (menuOptions - 1); // The index of the last menu item
-uint8_t selectedIndex = 0; // The index of the currently selected menu item
 
 // Game states
 enum class GameState : uint8_t {
@@ -33,6 +32,7 @@ enum class GameState : uint8_t {
 float gunAngle { 4.8 }; // Full circle is 6.28 radian, let's put the gun at 4.8 so it's facing up
 uint8_t frame { 0 }; // Used for counting frames for the sprite animations
 uint8_t score { 0 }; // For keeping score
+uint8_t selectedIndex = 0; // The index of the currently selected menu item
 
 // Bullets
 struct Bullet {
@@ -374,10 +374,64 @@ void gamePlay() {
     drawExplosion();
 }
 
+// Display intro image + menu
 void displayMenu() {
-    // Display intro image + menu
+    // Intro image
     arduboy.drawSlowXYBitmap(0, 0, intro_image, 128, 64, 1);
+    
+    // Draw the menu sprite
+    if (arduboy.audio.enabled()) {
+        sprites.drawOverwrite(92, 40, menuSpriteWithSoundOn, 0);
 
+        // Store potential coordinates in arrays
+        static const uint8_t arrowCoordsX[menuOptions] PROGMEM { 99, 88, 93 };
+        static const uint8_t arrowCoordsY[menuOptions] PROGMEM { 41, 49, 57 };
+
+        // Read the arrow coordinates from the progmem arrays
+        // (This is usually cheaper than using lots of if statements)
+        const uint8_t arrowX = pgm_read_byte(&arrowCoordsX[selectedIndex]);
+        const uint8_t arrowY = pgm_read_byte(&arrowCoordsY[selectedIndex]);
+
+        // Draw the arrow
+        sprites.drawSelfMasked(arrowX, arrowY, arrowSprite, 0);
+    }
+    else {
+        sprites.drawOverwrite(91, 40, menuSpriteWithSoundOff, 0);
+
+        // Store potential coordinates in arrays
+        static const uint8_t arrowCoordsX[menuOptions] PROGMEM { 99, 84, 93 };
+        static const uint8_t arrowCoordsY[menuOptions] PROGMEM { 41, 49, 57 };
+
+        // Read the arrow coordinates from the progmem arrays
+        // (This is usually cheaper than using lots of if statements)
+        const uint8_t arrowX = pgm_read_byte(&arrowCoordsX[selectedIndex]);
+        const uint8_t arrowY = pgm_read_byte(&arrowCoordsY[selectedIndex]);
+
+        // Draw the arrow
+        sprites.drawSelfMasked(arrowX, arrowY, arrowSprite, 0);
+    }
+
+    if (arduboy.justPressed(A_BUTTON)){
+        switch (selectedIndex)
+        {
+        case 0:
+            changeGameState(GameState::Game);
+            break;
+        
+        case 1:
+            arduboy.audio.toggle();
+            break;
+            
+        case 2:
+            changeGameState(GameState::Credits);
+
+        default:
+            break;
+        }
+    }
+}
+
+void moveInMenu() {
     // Move in the menu
     if (arduboy.justPressed(UP_BUTTON))
     {
@@ -392,39 +446,6 @@ void displayMenu() {
         // (Making sure it stays in range)
         if(selectedIndex < maxIndex)
             ++selectedIndex;
-    }
-    // Draw the menu sprite
-    sprites.drawOverwrite(92, 40, menuSpriteWithSoundOn, 0);
-
-    // Store potential coordinates in arrays
-    static const uint8_t arrowCoordsX[menuOptions] PROGMEM { 99, 88, 93 };
-    static const uint8_t arrowCoordsY[menuOptions] PROGMEM { 41, 49, 57 };
-
-    // Read the arrow coordinates from the progmem arrays
-    // (This is usually cheaper than using lots of if statements)
-    const uint8_t arrowX = pgm_read_byte(&arrowCoordsX[selectedIndex]);
-    const uint8_t arrowY = pgm_read_byte(&arrowCoordsY[selectedIndex]);
-
-    // Draw the arrow
-    sprites.drawSelfMasked(arrowX, arrowY, arrowSprite, 0);
-
-    if (arduboy.justPressed(A_BUTTON)){
-        switch (selectedIndex)
-        {
-        case 0:
-            changeGameState(GameState::Game);
-            break;
-        
-        case 1:
-            arduboy.print("Change sound");
-            break;
-            
-        case 2:
-            changeGameState(GameState::Credits);
-
-        default:
-            break;
-        }
     }
 }
 
@@ -453,6 +474,7 @@ void loop() {
     switch (gameState)
     {
         case GameState::Menu:
+            moveInMenu();
             displayMenu();
             break;
 
