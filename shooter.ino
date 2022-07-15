@@ -451,9 +451,9 @@ void moveInMenu() {
 }
 
 void displayScore() {
-    tinyfont.setCursor (4, 2);
+    tinyfont.setCursor(4, 2);
     tinyfont.print("Score: ");
-    tinyfont.setCursor (32, 2);
+    tinyfont.setCursor(32, 2);
     tinyfont.print(score);
     // Draw separator for the game area and the score
     arduboy.drawFastHLine(4, 8, 120, WHITE);
@@ -461,16 +461,24 @@ void displayScore() {
 
 void displayGameOver() {
     arduboy.drawBitmap(0, 0, gameover, 128, 64, WHITE);
-    tinyfont.setCursor (26, 38);
+    tinyfont.setCursor(26, 38);
     tinyfont.print("Press A for menu");
 }
 
 void displayPauseScreen() {
     arduboy.drawBitmap(0, 0, pause, 128, 64, WHITE);
-    tinyfont.setCursor (18, 36);
+    tinyfont.setCursor(18, 36);
     tinyfont.print("Press A to continue");
-    tinyfont.setCursor (36, 42);
+    tinyfont.setCursor(36, 42);
     tinyfont.print("or B to quit");
+}
+
+void displayCredits() {
+    arduboy.drawBitmap(0, 0, credits, 128, 64, WHITE);
+    tinyfont.setCursor(22, 34);
+    tinyfont.print("Testing: veralany");
+    tinyfont.setCursor(22, 42);
+    tinyfont.print("Programming: shan");
 }
 
 void setup() {
@@ -521,8 +529,7 @@ void loop() {
             break;
 
         case GameState::Credits:
-            arduboy.clear();
-            arduboy.print("Credits");
+            displayCredits();
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Menu);
             }
