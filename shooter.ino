@@ -302,14 +302,9 @@ void moveEnemy() {
 void summonEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (!(enemy[enemyNum].isOnScreen) && (arduboy.everyXFrames(random(240)))) {
-            enemy[enemyNum].x = random(0, 120);
-            enemy[enemyNum].y = random(8, 56);
-            // Avoid putting enemies right next to or on top of the turret
-            if (enemy[enemyNum].x < 56 || enemy[enemyNum].x > 72) {
-                if (enemy[enemyNum].y < 24 || enemy[enemyNum].y > 40) {
-                    enemy[enemyNum].isOnScreen = true;
-                }
-            }
+            enemy[enemyNum].x = random(90, 120);
+            enemy[enemyNum].y = random(9, 56);
+            enemy[enemyNum].isOnScreen = true;
         }
     }
 }
