@@ -211,6 +211,9 @@ void resetGame() {
     }
     // Reset score
     score = 0;
+
+    // Reset gunAngle
+    gunAngle = 4.8;
 }
 
 // Collision detection
