@@ -187,6 +187,17 @@ void drawBullets() {
     }
 }
 
+// Count bullets for display
+uint8_t countBullets() {
+    uint8_t bulletCounter = bullets;
+    for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
+        if (bullet[bulletNum].isOnScreen) {
+            bulletCounter = bullets - bulletNum - 1;
+        }
+    }
+    return bulletCounter;
+}
+
 // Reset game when game is over
 void resetGame() {
     // Remove bullets
@@ -436,10 +447,18 @@ void moveInMenu() {
 }
 
 void displayScore() {
+    // Print score
     tinyfont.setCursor(4, 2);
-    tinyfont.print("Score: ");
-    tinyfont.setCursor(32, 2);
+    tinyfont.print("Score:");
+    tinyfont.setCursor(36, 2);
     tinyfont.print(score);
+
+    // Print bullet counter
+    tinyfont.setCursor(84, 2);
+    tinyfont.print("Shells:");
+    tinyfont.setCursor(120, 2);
+    tinyfont.print(countBullets());
+
     // Draw separator for the game area and the score
     arduboy.drawFastHLine(4, 8, 120, WHITE);
 }
