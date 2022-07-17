@@ -8,10 +8,10 @@ Sprites sprites;
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::height());
 
 // Constants
-constexpr int16_t screenCenterX = 6; // Center of the screen for gun placement
+constexpr int16_t screenCenterX = 10; // Center of the screen for gun placement
 constexpr int16_t screenCenterY = 40; // Center of the screen for gun placement
-constexpr uint8_t radius = 3; // Radius of the turret's body
-constexpr uint8_t gunSize = 3; // Size (length) of the gun
+constexpr uint8_t radius = 2; // Radius of the turret's body
+constexpr uint8_t gunSize = 6; // Size (length) of the gun
 constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
 constexpr uint8_t enemies = 3; // Max active enemies
 constexpr uint8_t explosions = enemies; // There should be only as many explosions as there are enemies
@@ -273,9 +273,13 @@ void bulletHit_or_turretHit() {
 void drawEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isOnScreen) {
-            sprites.drawOverwrite(enemy[enemyNum].x, enemy[enemyNum].y, enemy_01, frame);
+            sprites.drawSelfMasked(enemy[enemyNum].x, enemy[enemyNum].y, enemy_01, frame);
         }
     }
+}
+
+void drawTank() {
+    sprites.drawSelfMasked(0, 32, tank, frame);
 }
 
 // Moving the enemies randomly
@@ -354,6 +358,7 @@ void gamePlay() {
 
     // Turret
     drawGun(gunAngle);
+    drawTank();
     rotateGun();
 
     // Bullets
