@@ -317,8 +317,8 @@ void moveEnemy() {
 void summonEnemy() {
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (!(enemy[enemyNum].isOnScreen) && (arduboy.everyXFrames(random(240)))) {
-            enemy[enemyNum].x = random(90, 120);
-            enemy[enemyNum].y = random(9, 56);
+            enemy[enemyNum].x = random(90, 119);
+            enemy[enemyNum].y = random(11, 51);
             enemy[enemyNum].isOnScreen = true;
         }
     }
