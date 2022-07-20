@@ -248,9 +248,9 @@ void bulletHit_or_turretHit() {
             for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
                 if (bullet[bulletNum].isOnScreen) {
                     // Create a hitbox for each of the bullets
-                    Rect bulletBox { bullet[bulletNum].x, bullet[bulletNum].y, 1, 1 };
+                    Point bulletBox { bullet[bulletNum].x, bullet[bulletNum].y };
                     // Check if there is a collision
-                    if (arduboy.collide(hitBox, bulletBox)) {
+                    if (arduboy.collide(bulletBox, hitBox)) {
                         // If there is, remove the enemy
                         enemy[enemyNum].isOnScreen = false;
                         // Make a sound when enemy is hit
