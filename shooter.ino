@@ -21,7 +21,6 @@ constexpr uint8_t maxIndex = (menuOptions - 1); // The index of the last menu it
 constexpr uint8_t groundLevel = 10;
 const byte *ground_images[] = { ground_flat, ground_bump, ground_hole };
 
-
 // Game states
 enum class GameState : uint8_t {
     Menu,
@@ -39,11 +38,11 @@ enum class GroundType : uint8_t {
 };
 
 GroundType ground[5] = {
-  GroundType::Flat,
-  GroundType::Flat,
-  GroundType::Hole,
-  GroundType::Flat,
-  GroundType::Flat,
+    GroundType::Flat,
+    GroundType::Flat,
+    GroundType::Hole,
+    GroundType::Flat,
+    GroundType::Flat,
 };
 
 // Variables
@@ -85,6 +84,7 @@ void changeGameState (GameState newGameState) {
     gameState = newGameState;
 }
 
+// Render ground
 void renderGround() {
   for (uint8_t i = 0; i < 5; i++) {
      uint8_t imageIndex = static_cast<uint8_t>(ground[i]);
@@ -92,8 +92,8 @@ void renderGround() {
     }
 }
 
+// Draw the ground based on the groundType listed in the function
 void drawground() {
-
     if (groundX == 32) {
         groundX = 0;
 
