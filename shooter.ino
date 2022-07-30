@@ -337,7 +337,12 @@ void drawEnemy() {
 }
 
 void drawTank() {
+    // Tank sprite
     sprites.drawSelfMasked(0, 32, tank, frame);
+    // Gun
+    drawGun(gunAngle);
+    // Rotate the gun
+    rotateGun();
 }
 
 // Moving the enemies randomly
@@ -414,10 +419,8 @@ void gamePlay() {
     // Score
     displayScore();
 
-    // Turret
-    drawGun(gunAngle);
+    // Tank
     drawTank();
-    rotateGun();
 
     // Bullets
     fireBullets();
