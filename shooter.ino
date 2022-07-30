@@ -18,6 +18,9 @@ constexpr uint8_t explosions = enemies; // There should be only as many explosio
 constexpr uint8_t menuOptions = 3; // The number of available menu options
 constexpr uint8_t minIndex = 0; // The index of the first menu item
 constexpr uint8_t maxIndex = (menuOptions - 1); // The index of the last menu item
+constexpr uint8_t groundLevel = 10;
+const byte *ground_images[] = { ground_flat, ground_bump, ground_hole };
+
 
 // Game states
 enum class GameState : uint8_t {
@@ -28,11 +31,27 @@ enum class GameState : uint8_t {
     GameOver
 };
 
+// Ground types
+enum class GroundType : uint8_t {
+  Flat,
+  Bump,
+  Hole,
+};
+
+GroundType ground[5] = {
+  GroundType::Flat,
+  GroundType::Flat,
+  GroundType::Hole,
+  GroundType::Flat,
+  GroundType::Flat,
+};
+
 // Variables
 float gunAngle { 0 }; // Full circle is 6.28 radian, facing up is 4.8, level is 0
 uint8_t frame { 0 }; // Used for counting frames for the sprite animations
 uint8_t score { 0 }; // For keeping score
 uint8_t selectedIndex = 0; // The index of the currently selected menu item
+uint8_t groundX { 0 };
 
 // Bullets
 struct Bullet {
@@ -64,6 +83,45 @@ GameState gameState = GameState::Menu;
 // Change game states
 void changeGameState (GameState newGameState) {
     gameState = newGameState;
+}
+
+void renderGround() {
+  for (uint8_t i = 0; i < 5; i++) {
+     uint8_t imageIndex = static_cast<uint8_t>(ground[i]);
+    Sprites::drawSelfMasked((i * 32) - groundX, groundLevel, ground_images[imageIndex], 0);   
+    }
+}
+
+void drawground() {
+
+    if (groundX == 32) {
+        groundX = 0;
+
+        uint8_t type = random(0, 6);
+        GroundType groundType;
+
+        switch (type) {
+            case 0 ... 3:
+            groundType = GroundType::Flat;
+            break;
+
+            case 4:
+            groundType = GroundType::Bump;
+            break;
+
+            case 5:
+            groundType= GroundType::Hole;
+            break;
+        }
+
+        ground[0] = ground[1];
+        ground[1] = ground[2];
+        ground[2] = ground[3];
+        ground[3] = ground[4];
+        ground[4] = groundType;
+
+    }
+    groundX++;
 }
 
 // Drawing the turret
@@ -374,6 +432,10 @@ void gamePlay() {
     
     // Explosions
     drawExplosion();
+
+    // Ground
+    renderGround();
+    drawground();
 }
 
 // Display intro image + menu
