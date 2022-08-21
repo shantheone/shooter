@@ -444,7 +444,7 @@ void gamePlay() {
 // Display intro image + menu
 void displayMenu() {
     // Intro image
-    arduboy.drawSlowXYBitmap(0, 0, intro_image, 128, 64, 1);
+    arduboy.drawBitmap(0, 0, intro_image, 128, 64, 1);
     
     // Draw the menu sprite
     if (arduboy.audio.enabled()) {
