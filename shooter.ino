@@ -88,7 +88,7 @@ void changeGameState (GameState newGameState) {
 void renderGround() {
   for (uint8_t i = 0; i < 5; i++) {
      uint8_t imageIndex = static_cast<uint8_t>(ground[i]);
-    Sprites::drawSelfMasked((i * 32) - groundX, groundLevel, ground_images[imageIndex], 0);   
+    Sprites::drawSelfMasked((i * 32) - groundX, groundLevel, ground_images[imageIndex], 0);
     }
 }
 
@@ -213,11 +213,11 @@ uint8_t findUnusedExplosion() {
 void moveBullets() {
     for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
         if (bullet[bulletNum].isOnScreen) {
-            // If the bullet is on the screen then start its lifetime counter so we can 
+            // If the bullet is on the screen then start its lifetime counter so we can
             // move it outward from the position it was originally fired
-            bullet[bulletNum].lifetime++; 
+            bullet[bulletNum].lifetime++;
 
-            // If the bullet just came into existence get the turrets angle as this is 
+            // If the bullet just came into existence get the turrets angle as this is
             // the angle the bullet should fly
             if (bullet[bulletNum].lifetime == 1) {
                 bullet[bulletNum].initialAngle = gunAngle;
@@ -226,7 +226,7 @@ void moveBullets() {
             // Calculating the bullet's x and y position according the above
             bullet[bulletNum].x = screenCenterX + ((bullet[bulletNum].lifetime + radius + gunSize) * cos(bullet[bulletNum].initialAngle));
             bullet[bulletNum].y = screenCenterY + ((bullet[bulletNum].lifetime + radius + gunSize) * sin(bullet[bulletNum].initialAngle));
-            
+
             // Check if the bullet is out of the screen. If yes, reset its .isOnScreen and .lifetime properties
             if (bullet[bulletNum].x < 0 || bullet[bulletNum].x > 128 || bullet[bulletNum].y < 8 || bullet[bulletNum].y > 64)  {
                 bullet[bulletNum].isOnScreen = false;
@@ -265,14 +265,14 @@ void resetGame() {
             bullet[bulletNum].lifetime = 0;
         }
     }
-   
+
    // Remove enemies
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         if (enemy[enemyNum].isOnScreen) {
             enemy[enemyNum].isOnScreen = false;
         }
     }
-   
+
     // Remove explosions
     for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
         if (explosion[explosionNum].isOnScreen) {
@@ -361,7 +361,7 @@ void moveEnemy() {
                     enemy[enemyNum].dx *= -1;
                     enemy[enemyNum].x = enemy[enemyNum].x + enemy[enemyNum].dx;
                 }
-                
+
                 // Change enemy movement direction if enemy is on the edge of screen (Y axis)
                 if (enemy[enemyNum].y < 10 || enemy[enemyNum].y > 52) {
                     enemy[enemyNum].dy *= -1;
@@ -373,7 +373,7 @@ void moveEnemy() {
             enemy[enemyNum].y += enemy[enemyNum].dy;
             }
         }
-    }    
+    }
 }
 
 // If there is no enemy, summon new ones at random intervals
@@ -432,7 +432,7 @@ void gamePlay() {
     summonEnemy();
     drawEnemy();
     moveEnemy();
-    
+
     // Explosions
     drawExplosion();
 
@@ -445,7 +445,7 @@ void gamePlay() {
 void displayMenu() {
     // Intro image
     arduboy.drawBitmap(0, 0, intro_image, 128, 64, 1);
-    
+
     // Draw the menu sprite
     if (arduboy.audio.enabled()) {
         sprites.drawOverwrite(92, 40, menuSpriteWithSoundOn, 0);
@@ -484,11 +484,11 @@ void displayMenu() {
         case 0:
             changeGameState(GameState::Game);
             break;
-        
+
         case 1:
             arduboy.audio.toggle();
             break;
-            
+
         case 2:
             changeGameState(GameState::Credits);
 
@@ -614,10 +614,10 @@ void loop() {
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Menu);
             }
-        
+
         default: GameState::Menu; break;
     }
-    
+
     // Draw everything
     arduboy.display();
 
