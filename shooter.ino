@@ -87,8 +87,9 @@ void changeGameState (GameState newGameState) {
 // Render ground
 void renderGround() {
   for (uint8_t i = 0; i < 5; i++) {
-     uint8_t imageIndex = static_cast<uint8_t>(ground[i]);
+    uint8_t imageIndex = static_cast<uint8_t>(ground[i]);
     Sprites::drawSelfMasked((i * 32) - groundX, groundLevel, ground_images[imageIndex], 0);
+    Sprites::drawSelfMasked((i * 32) - groundX, groundLevel + 46, ground_images[imageIndex], 0);
     }
 }
 
