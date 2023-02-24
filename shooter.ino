@@ -86,7 +86,7 @@ void changeGameState (GameState newGameState) {
 
 // Render ground
 void renderGround() {
-  for (uint8_t i = 0; i < 5; i++) {
+  for (uint8_t i = 0; i < 5; ++i) {
     uint8_t imageIndex = static_cast<uint8_t>(ground[i]);
     Sprites::drawSelfMasked((i * 32) - groundX, groundLevel, ground_images[imageIndex], 0);
     Sprites::drawSelfMasked((i * 32) - groundX, groundLevel + 46, ground_images[imageIndex], 0);
@@ -122,7 +122,7 @@ void drawground() {
         ground[4] = groundType;
 
     }
-    groundX++;
+    ++groundX;
 }
 
 // Drawing the turret
@@ -185,7 +185,7 @@ void fireBullets() {
 // Find the next unused bullet slot in the array and return the index
 uint8_t findUnusedBullet() {
     uint8_t bulletNum;
-    for (bulletNum = 0; bulletNum < bullets; bulletNum++) {
+    for (bulletNum = 0; bulletNum < bullets; ++bulletNum) {
         // If .isOnScreen property is not set then set it to true and break the for loop
         // since we found the next usable slot in the array
         if (!(bullet[bulletNum].isOnScreen)) {
@@ -199,7 +199,7 @@ uint8_t findUnusedBullet() {
 // Find the next unused explosion slot in the array and return the index
 uint8_t findUnusedExplosion() {
     uint8_t explosionNum;
-    for (explosionNum = 0; explosionNum < explosions; explosionNum++) {
+    for (explosionNum = 0; explosionNum < explosions; ++explosionNum) {
         // If .isOnScreen property is not set then set it to true and break the for loop
         // since we found the next usable slot in the array
         if (!(explosion[explosionNum].isOnScreen)) {
@@ -212,11 +212,11 @@ uint8_t findUnusedExplosion() {
 
 // Moving the bullets
 void moveBullets() {
-    for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
+    for (uint8_t bulletNum = 0; bulletNum < bullets; ++bulletNum) {
         if (bullet[bulletNum].isOnScreen) {
             // If the bullet is on the screen then start its lifetime counter so we can
             // move it outward from the position it was originally fired
-            bullet[bulletNum].lifetime++;
+            ++bullet[bulletNum].lifetime;
 
             // If the bullet just came into existence get the turrets angle as this is
             // the angle the bullet should fly
@@ -239,7 +239,7 @@ void moveBullets() {
 
 // Drawing the bullets
 void drawBullets() {
-    for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
+    for (uint8_t bulletNum = 0; bulletNum < bullets; ++bulletNum) {
         if (bullet[bulletNum].isOnScreen) {
             arduboy.drawPixel(bullet[bulletNum].x, bullet[bulletNum].y, WHITE);
         }
@@ -249,7 +249,7 @@ void drawBullets() {
 // Count bullets for display
 uint8_t countBullets() {
     uint8_t bulletCounter = bullets;
-    for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
+    for (uint8_t bulletNum = 0; bulletNum < bullets; ++bulletNum) {
         if (bullet[bulletNum].isOnScreen) {
             bulletCounter = bullets - bulletNum - 1;
         }
@@ -260,7 +260,7 @@ uint8_t countBullets() {
 // Reset game when game is over
 void resetGame() {
     // Remove bullets
-    for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
+    for (uint8_t bulletNum = 0; bulletNum < bullets; ++bulletNum) {
         if (bullet[bulletNum].isOnScreen) {
             bullet[bulletNum].isOnScreen = false;
             bullet[bulletNum].lifetime = 0;
@@ -268,14 +268,14 @@ void resetGame() {
     }
 
    // Remove enemies
-    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+    for (uint8_t enemyNum = 0; enemyNum < enemies; ++enemyNum) {
         if (enemy[enemyNum].isOnScreen) {
             enemy[enemyNum].isOnScreen = false;
         }
     }
 
     // Remove explosions
-    for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
+    for (uint8_t explosionNum = 0; explosionNum < explosions; ++explosionNum) {
         if (explosion[explosionNum].isOnScreen) {
             explosion[explosionNum].isOnScreen = false;
         }
@@ -293,7 +293,7 @@ void bulletHit_or_turretHit() {
     // Create hitbox for the turret
     Rect turretBox { 0, 32, 16, 16 };
     // Iterate through all enemies
-    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+    for (uint8_t enemyNum = 0; enemyNum < enemies; ++enemyNum) {
         // If any of them is on the screen...
         if (enemy[enemyNum].isOnScreen) {
             // ...then create a hitBox for them...
@@ -304,7 +304,7 @@ void bulletHit_or_turretHit() {
                 changeGameState(GameState::GameOver);
             }
             // ...and iterate through all the bullets to see if we have a collision...
-            for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
+            for (uint8_t bulletNum = 0; bulletNum < bullets; ++bulletNum) {
                 if (bullet[bulletNum].isOnScreen) {
                     // Create a hitbox for each of the bullets
                     Point bulletBox { bullet[bulletNum].x, bullet[bulletNum].y };
@@ -330,7 +330,7 @@ void bulletHit_or_turretHit() {
 
 // Drawing the enemies
 void drawEnemy() {
-    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+    for (uint8_t enemyNum = 0; enemyNum < enemies; ++enemyNum) {
         if (enemy[enemyNum].isOnScreen) {
             sprites.drawSelfMasked(enemy[enemyNum].x, enemy[enemyNum].y, enemy_01, frame);
         }
@@ -348,7 +348,7 @@ void drawTank() {
 
 // Moving the enemies randomly
 void moveEnemy() {
-    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+    for (uint8_t enemyNum = 0; enemyNum < enemies; ++enemyNum) {
         if (enemy[enemyNum].isOnScreen) {
             // Move the enemy every 4 frames
             if (arduboy.everyXFrames(4)) {
@@ -379,7 +379,7 @@ void moveEnemy() {
 
 // If there is no enemy, summon new ones at random intervals
 void summonEnemy() {
-    for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
+    for (uint8_t enemyNum = 0; enemyNum < enemies; ++enemyNum) {
         if (!(enemy[enemyNum].isOnScreen) && (arduboy.everyXFrames(random(240)))) {
             enemy[enemyNum].x = random(90, 119);
             enemy[enemyNum].y = random(11, 51);
@@ -390,7 +390,7 @@ void summonEnemy() {
 
 // Check for on screen explosions and display a new one
 void summonExplosion(int16_t x, int16_t y) {
-    for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
+    for (uint8_t explosionNum = 0; explosionNum < explosions; ++explosionNum) {
         if (!(explosion[explosionNum].isOnScreen)) {
             explosion[explosionNum].x = x;
             explosion[explosionNum].y = y;
@@ -402,7 +402,7 @@ void summonExplosion(int16_t x, int16_t y) {
 // Draw the explosion
 void drawExplosion() {
     uint8_t explosion_internal { 0 }; // temp variable for te explosion index to use later for removal
-    for (uint8_t explosionNum = 0; explosionNum < explosions; explosionNum++) {
+    for (uint8_t explosionNum = 0; explosionNum < explosions; ++explosionNum) {
         if (explosion[explosionNum].isOnScreen) {
             explosion_internal = explosionNum;
             // Draw the explosion sprite
@@ -623,6 +623,6 @@ void loop() {
     // Draw everything
     arduboy.display();
 
-    if (arduboy.everyXFrames(10)) frame++; // Frame counting for sprite animation
+    if (arduboy.everyXFrames(10)) ++frame; // Frame counting for sprite animation
     if (frame > 2) frame = 0; // Reset every third frame, since we are using sprites with three frames
 }
