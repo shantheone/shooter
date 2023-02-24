@@ -615,8 +615,9 @@ void loop() {
             if (arduboy.justPressed(A_BUTTON)) {
                 changeGameState(GameState::Menu);
             }
+            break;
 
-        default: GameState::Menu; break;
+        default: GameState::Menu;
     }
 
     // Draw everything
