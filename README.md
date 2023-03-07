@@ -2,5 +2,5 @@
 
 Basic shooting game, now with aliens!
 
-![Intro Screen](assets/intro_screen.png)
+<img src=assets/intro_screen.png width="200%" height="200%">
 
