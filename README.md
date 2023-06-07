@@ -3,9 +3,9 @@
 Basic shooting game, now with aliens!
 
 ## Screenshots
-Menu screen:
+Menu screen:<br>
 ![Menu Screen](screenshots/menu.png)
 
-Gameplay:
+Gameplay:<br>
 ![Gameplay](screenshots/gameplay.png)
 
