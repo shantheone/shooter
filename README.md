@@ -2,4 +2,10 @@
 
 Basic shooting game, now with aliens!
 
-![Intro Screen](assets/intro_screen.png)
+## Screenshots
+Menu screen:
+[Menu Screen](screenshots/menu.png)
+
+Gameplay:
+[Gameplay](screenshots/gameplay.png)
+
