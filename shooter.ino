@@ -317,7 +317,7 @@ void resetGame() {
 // Collision detection
 void bulletHit_or_turretHit() {
     // Create hitbox for the turret
-    Rect turretBox { 0, 32, 16, 16 };
+    Rect turretBox { 0, tankY, 16, 16 };
     // Iterate through all enemies
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         // If any of them is on the screen...
