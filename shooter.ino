@@ -9,7 +9,6 @@ Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::heigh
 
 // Constants
 constexpr int16_t screenCenterX = 10; // Center of the screen for gun placement
-constexpr int16_t screenCenterY = 40; // Center of the screen for gun placement
 constexpr uint8_t radius = 2; // Radius of the turret's body
 constexpr uint8_t gunSize = 6; // Size (length) of the gun
 constexpr uint8_t bullets = 3; // The number of bullets that can be on the screen at the same time
@@ -51,6 +50,7 @@ uint8_t frame { 0 }; // Used for counting frames for the sprite animations
 uint8_t score { 0 }; // For keeping score
 uint8_t selectedIndex = 0; // The index of the currently selected menu item
 uint8_t groundX { 0 };
+uint8_t tankY { 32 }; // Default tank position
 
 // Bullets
 struct Bullet {
@@ -128,18 +128,18 @@ void drawground() {
 // Drawing the turret
 void drawGun(float angle) {
     // The body of the turret is a circle
-    arduboy.fillCircle(screenCenterX, screenCenterY, radius, WHITE);
+    arduboy.fillCircle(screenCenterX, tankY + 8, radius, WHITE);
 
     // Drawing the gun
     // The gun is a line with its starting point fixed on the circle. To achive this there is
     // a need for some math
     float x0 = screenCenterX + (radius * cos(angle));
-    float y0 = screenCenterY + (radius * sin(angle));
+    float y0 = (tankY + 8) + (radius * sin(angle));
 
     // The gun's endpoint is calculated in the same manner as the starting point, but we'll
     // add the length of the gun (gunSize) to the equation
     float x1 = screenCenterX + ((radius + gunSize) * cos(angle));
-    float y1 = screenCenterY + ((radius + gunSize) * sin(angle));
+    float y1 = (tankY + 8) + ((radius + gunSize) * sin(angle));
 
     // After the starting and ending point is calculated, let's draw the gun
     arduboy.drawLine(x0, y0, x1, y1, WHITE);
@@ -168,6 +168,29 @@ void rotateGun() {
     }
 }
 
+// Move tank up and down 
+void moveTank() {
+    // Move tank up 
+    if (arduboy.pressed(UP_BUTTON)) {
+        if (tankY <= 16) {
+            tankY = 16;
+        }
+        else {
+           --tankY;
+        }
+    }
+
+    // Move tank down 
+    if (arduboy.pressed(DOWN_BUTTON)) {
+        if (tankY >= 42) {
+           tankY = 42; 
+        }
+        else {
+            ++tankY;
+        }
+    }
+}
+
 // Fire bullets by pressing the B_BUTTON
 void fireBullets() {
     if (arduboy.justPressed(B_BUTTON)) {
@@ -176,7 +199,7 @@ void fireBullets() {
         // If yes, set its starting coordinates
         if (bulletNum != bullets) {
             bullet[bulletNum].x = screenCenterX + ((1 + radius + gunSize) * cos(gunAngle));
-            bullet[bulletNum].y = screenCenterY + ((1 + radius + gunSize) * sin(gunAngle));
+            bullet[bulletNum].y = (tankY + 8) + ((1 + radius + gunSize) * sin(gunAngle));
             beep.tone(beep.freq(240), 10); // Make a sound when bullet is fired
         }
     }
@@ -226,7 +249,7 @@ void moveBullets() {
 
             // Calculating the bullet's x and y position according the above
             bullet[bulletNum].x = screenCenterX + ((bullet[bulletNum].lifetime + radius + gunSize) * cos(bullet[bulletNum].initialAngle));
-            bullet[bulletNum].y = screenCenterY + ((bullet[bulletNum].lifetime + radius + gunSize) * sin(bullet[bulletNum].initialAngle));
+            bullet[bulletNum].y = (tankY + 8) + ((bullet[bulletNum].lifetime + radius + gunSize) * sin(bullet[bulletNum].initialAngle));
 
             // Check if the bullet is out of the screen. If yes, reset its .isOnScreen and .lifetime properties
             if (bullet[bulletNum].x < 0 || bullet[bulletNum].x > 128 || bullet[bulletNum].y < 8 || bullet[bulletNum].y > 64)  {
@@ -286,6 +309,9 @@ void resetGame() {
 
     // Reset gunAngle
     gunAngle = 0;
+
+    // Reset tank position
+    tankY = 32;
 }
 
 // Collision detection
@@ -339,7 +365,7 @@ void drawEnemy() {
 
 void drawTank() {
     // Tank sprite
-    sprites.drawSelfMasked(0, 32, tank, frame);
+    sprites.drawSelfMasked(0, tankY, tank, frame);
     // Gun
     drawGun(gunAngle);
     // Rotate the gun
@@ -421,6 +447,7 @@ void gamePlay() {
     displayScore();
 
     // Tank
+    moveTank();
     drawTank();
 
     // Bullets
