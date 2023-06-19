@@ -18,6 +18,7 @@ constexpr uint8_t menuOptions = 3; // The number of available menu options
 constexpr uint8_t minIndex = 0; // The index of the first menu item
 constexpr uint8_t maxIndex = (menuOptions - 1); // The index of the last menu item
 constexpr uint8_t groundLevel = 10;
+constexpr uint8_t potholes = 2; // The max number of potholes on the screen
 const byte *ground_images[] = { ground_flat, ground_bump, ground_hole };
 
 // Game states
@@ -74,14 +75,42 @@ struct Explosion {
     bool isOnScreen { false }; // does the bullet exist
 };
 
+// Potholes
+struct Pothole {
+    int16_t x, y { 0 };
+    bool isOnScreen { false };
+}
+
 Bullet bullet[bullets];
 Enemy enemy[enemies];
 Explosion explosion[explosions];
+Pothole potholes[potholes];
 GameState gameState = GameState::Menu;
 
 // Change game states
 void changeGameState (GameState newGameState) {
     gameState = newGameState;
+}
+
+// TODO: pothole stuff
+// Find the next unused slot for the pothole array
+void findUnusedPothole() {
+
+}
+
+// Check if there is any pothole on screen and if not create one randomly
+void summonPothole() {
+
+}
+
+// Draw the pothole
+void drawPothole() {
+  
+}
+
+// Move the pothole on the x axis
+void movePothole() {
+
 }
 
 // Render ground
@@ -304,6 +333,13 @@ void resetGame() {
         }
     }
 
+    // Remove potholes
+    for (uint8_t potholeNum = 0; potholeNum < potholes; potholeNum++) {
+        if (pothole[potholeNum].isOnScreen) {
+            pothole[potholeNum].isOnScreen = false;
+        }
+    }
+
     // Reset score
     score = 0;
 
@@ -315,6 +351,7 @@ void resetGame() {
 }
 
 // Collision detection
+// TODO: pothole collision detection here (rename function)
 void bulletHit_or_turretHit() {
     // Create hitbox for the turret
     Rect turretBox { 0, tankY, 16, 16 };
@@ -463,6 +500,11 @@ void gamePlay() {
 
     // Explosions
     drawExplosion();
+
+    // Potholes
+    summonPothole();
+    drawPothole();
+    movePothole();
 
     // Ground
     renderGround();
