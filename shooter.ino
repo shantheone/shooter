@@ -79,12 +79,12 @@ struct Explosion {
 struct Pothole {
     int16_t x, y { 0 };
     bool isOnScreen { false };
-}
+};
 
 Bullet bullet[bullets];
 Enemy enemy[enemies];
 Explosion explosion[explosions];
-Pothole potholes[potholes];
+Pothole pothole[potholes];
 GameState gameState = GameState::Menu;
 
 // Change game states
@@ -92,22 +92,27 @@ void changeGameState (GameState newGameState) {
     gameState = newGameState;
 }
 
-// TODO: pothole stuff
-// Find the next unused slot for the pothole array
-void findUnusedPothole() {
-
-}
-
-// Check if there is any pothole on screen and if not create one randomly
+// Add a new pothole randomly offscreen, after that we will move it towards the left
 void summonPothole() {
-
+  for (uint8_t potholeNum = 0; potholeNum < potholes; potholeNum++) {
+    if (!(pothole[potholeNum].isOnScreen) && (arduboy.everyXFrames(random(480)))) {
+            pothole[potholeNum].x = 128;
+            pothole[potholeNum].y = random(11, 51);
+            pothole[potholeNum].isOnScreen = true;
+        }
+    }
 }
 
 // Draw the pothole
 void drawPothole() {
-  
+    for (uint8_t potholeNum = 0; potholeNum < potholes; potholeNum++) {
+        if (pothole[potholeNum].isOnScreen) {
+            sprites.drawSelfMasked(pothole[potholeNum].x, pothole[potholeNum].y, pot_hole, 0);
+        }
+    }
 }
 
+// TODO
 // Move the pothole on the x axis
 void movePothole() {
 
