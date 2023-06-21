@@ -253,20 +253,6 @@ uint8_t findUnusedBullet() {
     return bulletNum;
 }
 
-// Find the next unused explosion slot in the array and return the index
-uint8_t findUnusedExplosion() {
-    uint8_t explosionNum;
-    for (explosionNum = 0; explosionNum < explosions; explosionNum++) {
-        // If .isOnScreen property is not set then set it to true and break the for loop
-        // since we found the next usable slot in the array
-        if (!(explosion[explosionNum].isOnScreen)) {
-            explosion[explosionNum].isOnScreen = true;
-            break;
-        }
-    }
-    return explosionNum;
-}
-
 // Moving the bullets
 void moveBullets() {
     for (uint8_t bulletNum = 0; bulletNum < bullets; bulletNum++) {
