@@ -18,7 +18,7 @@ constexpr uint8_t menuOptions = 3; // The number of available menu options
 constexpr uint8_t minIndex = 0; // The index of the first menu item
 constexpr uint8_t maxIndex = (menuOptions - 1); // The index of the last menu item
 constexpr uint8_t groundLevel = 10;
-constexpr uint8_t potholes = 2; // The max number of potholes on the screen
+constexpr uint8_t potholes = 1; // The max number of potholes on the screen
 const byte *ground_images[] = { ground_flat, ground_bump, ground_hole };
 
 // Game states
@@ -97,7 +97,7 @@ void summonPothole() {
   for (uint8_t potholeNum = 0; potholeNum < potholes; potholeNum++) {
     if (!(pothole[potholeNum].isOnScreen) && (arduboy.everyXFrames(random(480)))) {
             pothole[potholeNum].x = 128;
-            pothole[potholeNum].y = random(11, 51);
+            pothole[potholeNum].y = random(14, 48);
             pothole[potholeNum].isOnScreen = true;
         }
     }
@@ -112,10 +112,18 @@ void drawPothole() {
     }
 }
 
-// TODO
 // Move the pothole on the x axis
 void movePothole() {
-
+    for (uint8_t potholeNum = 0; potholeNum < potholes; potholeNum++) {
+        if (pothole[potholeNum].isOnScreen) {
+            // Move the pothole on the X axis to the left
+            --pothole[potholeNum].x;
+  
+            // If the pothole is offscreen, set .isOnScreen to false
+            if (pothole[potholeNum].x < -8)
+              pothole[potholeNum].isOnScreen = false;
+          }
+      }
 }
 
 // Render ground
