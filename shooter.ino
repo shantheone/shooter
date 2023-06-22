@@ -350,18 +350,17 @@ void resetGame() {
 }
 
 // Collision detection
-// TODO: pothole collision detection here (rename function)
-void bulletHit_or_turretHit() {
+void collisionDetection() {
     // Create hitbox for the turret
-    Rect turretBox { 0, tankY, 16, 16 };
+    Rect tankBox { 0, tankY, 16, 16 };
     // Iterate through all enemies
     for (uint8_t enemyNum = 0; enemyNum < enemies; enemyNum++) {
         // If any of them is on the screen...
         if (enemy[enemyNum].isOnScreen) {
             // ...then create a hitBox for them...
             Rect hitBox { enemy[enemyNum].x, enemy[enemyNum].y, enemy[enemyNum].width, enemy[enemyNum].height };
-            // Check if the hitbox collides with the turret
-            if (arduboy.collide(hitBox, turretBox)) {
+            // Check if the hitbox collides with the tank
+            if (arduboy.collide(hitBox, tankBox)) {
                 // And change GameState to GameOver if it does
                 changeGameState(GameState::GameOver);
             }
@@ -388,6 +387,20 @@ void bulletHit_or_turretHit() {
             }
         }
     }
+
+    // Iterate through the potholes array
+    for (uint8_t potholeNum = 0; potholeNum < potholes; potholeNum++) {
+        // If there is a pothole on the screen
+        if (pothole[potholeNum].isOnScreen) {
+            // Then create a hitbox for it
+            Rect hitBox { pothole[potholeNum].x, pothole[potholeNum].y, 8, 8 };
+            // Check if the pothole collides with the tank
+            if (arduboy.collide(hitBox, tankBox)) {
+                // and change the GameState to GameOver if it does
+                changeGameState(GameState::GameOver);
+              }
+          }
+      }
 }
 
 // Drawing the enemies
@@ -489,7 +502,6 @@ void gamePlay() {
     // Bullets
     fireBullets();
     moveBullets();
-    bulletHit_or_turretHit();
     drawBullets();
 
     // Enemies
@@ -508,6 +520,9 @@ void gamePlay() {
     // Ground
     renderGround();
     drawground();
+
+    // Collision detection
+    collisionDetection();
 }
 
 // Display intro image + menu
